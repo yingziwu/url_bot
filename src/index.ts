@@ -217,6 +217,7 @@ async function main() {
   }
 
   function _streaming() {
+    console.info(`socketExist: ${socketExist}`);
     if (socketExist) {
       return;
     }
@@ -228,9 +229,9 @@ async function main() {
     socket.addEventListener("open", (ev) => {
       socket.send('{"type":"subscribe","stream":"user"}');
       socket.send('{"type":"subscribe","stream":"public"}');
+      socketExist = true;
       Deno.addSignalListener("SIGINT", sigIntHandler);
       console.info("[websocket] open websocket");
-      socketExist = true;
     });
 
     console.debug('socket.addEventListener("message")');
@@ -339,18 +340,25 @@ async function main() {
     console.debug('socket.addEventListener("error")');
     socket.addEventListener("error", async (ev) => {
       console.error(ev);
+      setTimeout(() => {
+        Deno.removeSignalListener("SIGINT", sigIntHandler);
+        console.info("[websocket] Try to reopen websocket……");
+        _streaming();
+      }, 1000 * 30);
     });
 
     console.debug('socket.addEventListener("close")');
     socket.addEventListener("close", (ev) => {
-      console.info("[websocket] closed!");
       socketExist = false;
+      console.info("[websocket] closed!");
     });
 
     async function sigIntHandler() {
       console.log("interrupted!");
-      socket.close();
-      await sleep(500);
+      if (socketExist) {
+        socket.close();
+      }
+      await sleep(300);
       Deno.exit();
     }
   }
