@@ -1,14 +1,6 @@
 ///  <reference types="./mastodon.d.ts" />
-import {
-  get,
-  post,
-  AccessToken,
-  InstanceUrl,
-  parse,
-  sleep,
-  compareUrl,
-  sha1sum,
-} from "./lib.ts";
+import { get, post, AccessToken, InstanceUrl } from "./http.ts";
+import { parse, sleep, compareUrl, sha1sum } from "./lib.ts";
 import { clean } from "./removeTrackParam.ts";
 
 import { Element } from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
@@ -257,8 +249,7 @@ async function main() {
         if (account.id === id) {
           return;
         }
-        // let _mentions = mentions.map((m) => m.acct);
-        let _mentions = [];
+        let _mentions = mentions.map((m) => m.acct);
         _mentions.push(account.acct);
         _mentions = Array.from(new Set(_mentions));
 

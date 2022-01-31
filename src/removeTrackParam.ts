@@ -3,7 +3,6 @@ import {
   whitelist,
   general,
   shortURL,
-  getAsteriskRegExp,
   asterisk,
   ValueOf,
 } from "./rules.ts";
@@ -40,14 +39,9 @@ function removeTrackParm(_url: string) {
     } else {
       for (const w of white) {
         if (typeof w === "string") {
-          if (w.includes("*")) {
-            const re = getAsteriskRegExp(w);
-            reKeep(re);
-          } else {
-            const s = search.get(w);
-            if (s) {
-              keep.set(w, s);
-            }
+          const s = search.get(w);
+          if (s) {
+            keep.set(w, s);
           }
         } else if (w instanceof RegExp) {
           reKeep(w);
@@ -55,14 +49,9 @@ function removeTrackParm(_url: string) {
           // Rule Object
           if (url.pathname.startsWith(w.pathname)) {
             if (typeof w.search === "string") {
-              if (w.search.includes("*")) {
-                const re = getAsteriskRegExp(w.search);
-                reKeep(re);
-              } else {
-                const s = search.get(w.search);
-                if (s) {
-                  keep.set(w.search, s);
-                }
+              const s = search.get(w.search);
+              if (s) {
+                keep.set(w.search, s);
               }
             } else if (w.search instanceof RegExp) {
               reKeep(w.search);
@@ -82,24 +71,14 @@ function removeTrackParm(_url: string) {
   if (Array.isArray(special)) {
     special.forEach((s) => {
       if (typeof s === "string") {
-        if (s.includes("*")) {
-          const re = getAsteriskRegExp(s);
-          reRemove(re);
-        } else {
-          search.delete(s);
-        }
+        search.delete(s);
       } else if (s instanceof RegExp) {
         reRemove(s);
       } else {
         // Rule Object
         if (url.pathname.startsWith(s.pathname)) {
           if (typeof s.search === "string") {
-            if (s.search.includes("*")) {
-              const re = getAsteriskRegExp(s.search);
-              reRemove(re);
-            } else {
-              search.delete(s.search);
-            }
+            search.delete(s.search);
           } else if (s.search instanceof RegExp) {
             reRemove(s.search);
           }
@@ -155,4 +134,13 @@ export async function clean(url: string) {
 }
 
 if (import.meta.main) {
+  (async () => {
+    const { parse } = await import("https://deno.land/std/flags/mod.ts");
+    const args = parse(Deno.args);
+    args._.forEach(async (url) => {
+      console.info(
+        `原URL：${url}\n处理后URL：${await clean(url as string)}\n\n`
+      );
+    });
+  })();
 }

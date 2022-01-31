@@ -1,3 +1,5 @@
+import { parse } from "./lib.ts";
+
 export type ValueOf<T> = T[keyof T];
 
 // https://github.com/AdguardTeam/AdguardFilters/tree/master/TrackParamFilter/sections
@@ -123,7 +125,7 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "srcid",
     "nettype",
   ],
-  "twitter.com": ["ref_src", "ref_url", "s"],
+  "twitter.com": ["ref_src", "ref_url", "s", "t"],
   "reddit.com": [
     "_branch_referrer",
     "post_fullname",
@@ -217,6 +219,31 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     { pathname: "/hz/contact-us/csp", search: "from" },
     { pathname: "/message-us", search: "muClientName" },
   ],
+  "nikkei.com": ["i_cid", "n_cid"],
+  "nikkeibp.co.jp": ["i_cid"],
+  "yandex.*": [
+    "clid",
+    "source",
+    { pathname: "/news/", search: "tag" },
+    { pathname: "/news/", search: "persistent_id" },
+    { pathname: "/news/", search: "msid" },
+    { pathname: "/news/", search: "mlid" },
+    { pathname: "/news/", search: "stid" },
+    { pathname: "/sport/", search: "persistent_id" },
+    { pathname: "/sport/", search: "msid" },
+    { pathname: "/sport/", search: "mlid" },
+    { pathname: "/sport/", search: "stid" },
+    { pathname: "/images/", search: "source-serpid" },
+  ],
+  "m.baidu.com": [
+    { pathname: "/sf", search: "frsrcid" },
+    { pathname: "/sf", search: "openapi" },
+    { pathname: "/sf", search: "cambrian_id" },
+    { pathname: "/sf", search: "baijiahao_id" },
+    { pathname: "/sf", search: "ext" },
+    { pathname: "/sf", search: "top" },
+    { pathname: "/sf", search: "_t" },
+  ],
 };
 const whitelist: Record<string, (string | RegExp | rule)[] | true> = {
   "ramtrucks.com": [{ pathname: "/mediaserver/", search: true }],
@@ -250,7 +277,7 @@ function converAsterisk(rules: typeof specific | typeof whitelist) {
       const re = getAsteriskRegExp(k);
       asterisk.set(re, v);
     });
-  const out = JSON.parse(JSON.stringify(rules)) as Record<
+  const out = Object.assign({}, rules) as Record<
     string,
     ValueOf<typeof rules> | typeof asterisk
   >;
@@ -261,7 +288,7 @@ const specificExport = converAsterisk(specific);
 const whitelistExport = converAsterisk(whitelist);
 export { specificExport as specific, whitelistExport as whitelist };
 
-function get(url: string, headers?: Record<string, string>) {
+async function get(url: string, headers?: Record<string, string>) {
   if (headers === undefined) {
     headers = {
       Accept:
@@ -276,23 +303,26 @@ function get(url: string, headers?: Record<string, string>) {
       "Upgrade-Insecure-Requests": "1",
     };
   }
-  return fetch(url, {
+  const controller = new AbortController();
+  const signal = controller.signal;
+  const tid = setTimeout(() => {
+    controller.abort("Timeout!");
+  }, 10000);
+  console.debug(`[GET] ${url}`);
+  const response = await fetch(url, {
     headers,
     redirect: "follow",
+    signal,
   });
+  clearTimeout(tid);
+  return response;
 }
 
 async function follow(url: string, getFunc = get) {
   try {
-    console.debug(`[GET] ${url}`);
     const resp = await getFunc(url);
-    if (resp.ok) {
-      await resp.body?.cancel();
-      return resp.url;
-    } else {
-      await resp.body?.cancel();
-      throw new Error(`Follow ${url} Failed!`);
-    }
+    await resp.body?.cancel();
+    return resp.url;
   } catch (error) {
     console.error(error);
     return url;
@@ -301,6 +331,17 @@ async function follow(url: string, getFunc = get) {
 
 export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["we.tl", follow],
+  ["b23.tv", follow],
+  ["redd.it", follow],
+  ["v.redd.it", follow],
+  ["youtu.be", follow],
+  ["bit.ly", follow],
+  ["is.gd", follow],
+  ["dwz.cn", follow],
+  ["sourl.cn", follow],
+  ["w.url.cn", follow],
+  ["tinyurl.com", follow],
+  ["goo.gl", follow],
   [
     "t.co",
     (url) => {
@@ -308,7 +349,25 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
       return follow(url, nGet);
     },
   ],
-  ["b23.tv", follow],
-  ["v.redd.it", follow],
-  ["youtu.be", follow],
+  [
+    "t.cn",
+    async (url) => {
+      const resp = await get(url);
+      if (new URL(resp.url).hostname === "t.cn") {
+        const doc = parse(await resp.text());
+        const out = doc
+          ?.querySelector(".open-url > a")
+          ?.getAttribute("href")
+          ?.trim();
+        if (out) {
+          return out;
+        } else {
+          throw new Error(`展开短网址时出错：${url}`);
+        }
+      } else {
+        await resp.body?.cancel();
+        return resp.url;
+      }
+    },
+  ],
 ]);
