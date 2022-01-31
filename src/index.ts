@@ -339,8 +339,6 @@ async function main() {
     console.debug('socket.addEventListener("error")');
     socket.addEventListener("error", async (ev) => {
       console.error(ev);
-      socketExist = false;
-      Deno.exit(125);
     });
 
     console.debug('socket.addEventListener("close")');
