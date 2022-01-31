@@ -52,6 +52,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://goo.gl/SXYcFm"),
     "https://www.youtube.com/playlist?list=PLsw2iU9xmpfZKOcZbKn7tbAPAi6hdM72w&disable_polymer=true"
   );
+  assertEquals(
+    await clean("http://mtw.so/6mz6iq"),
+    "https://app3smw8f5b1177.h5.xiaoeknow.com/v2/course/alive/l_61e273ace4b0f67a4d486d61?app_id=app3smw8f5b1177&alive_mode=0&pro_id=term_61e3b6352eff0_5WDTNK&type=2"
+  );
 
   assertEquals(
     await clean("https://t.co/KODJKyanrb"),
