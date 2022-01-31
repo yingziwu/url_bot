@@ -376,13 +376,15 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
       } else {
         await resp.body?.cancel();
         if (resp.url.startsWith("https://passport.weibo.com/visitor/")) {
-          const resp = await get(url, undefined, "manual");
-          if (resp.status === 302) {
-            const location = resp.headers.get("location");
+          const resp2 = await get(url, undefined, "manual");
+          if (resp2.status === 302) {
+            await resp2.body?.cancel();
+            const location = resp2.headers.get("location");
             if (location) {
               return location;
             }
           }
+          await resp2.body?.cancel();
           throw new Error(`展开短网址时出错：${url}`);
         } else {
           return resp.url;
