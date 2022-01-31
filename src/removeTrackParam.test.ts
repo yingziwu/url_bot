@@ -66,6 +66,10 @@ Deno.test("Remove Track Param", async () => {
     "https://harrydenley.com/faking-twitter-unfurling/"
   );
   assertEquals(
+    await clean("https://douc.cc/0cdUDB"),
+    "https://ukiyo1220.blogspot.com/2021/05/blog-post.html?m=1"
+  );
+  assertEquals(
     await clean("https://t.cn/A6MRtZVJ"),
     "https://techxplore.com/news/2021-08-lg-6g-transmission-meters.html"
   );

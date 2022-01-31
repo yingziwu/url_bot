@@ -270,6 +270,10 @@ async function main() {
           language,
           created_at,
         } = data;
+        if (sessionStorage.getItem(statusId)) {
+          return;
+        }
+        sessionStorage.setItem(statusId, JSON.stringify(true));
         if (account.id === id) {
           return;
         }

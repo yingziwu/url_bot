@@ -375,4 +375,22 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
       }
     },
   ],
+  [
+    "douc.cc",
+    async (url) => {
+      const resp = await get(url);
+      if (resp.url.startsWith("https://www.douban.com/link2/")) {
+        await resp.body?.cancel();
+        const out = new URL(resp.url).searchParams.get("url");
+        if (out) {
+          return out;
+        } else {
+          throw new Error(`获取长链接失败！${url}`);
+        }
+      } else {
+        await resp.body?.cancel();
+        return resp.url;
+      }
+    },
+  ],
 ]);
