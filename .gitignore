@@ -3,4 +3,4 @@ registries/
 .vscode/
 gen/
 deps/
-init.sh
+.env

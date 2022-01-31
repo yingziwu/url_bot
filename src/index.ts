@@ -1,6 +1,6 @@
 ///  <reference types="./mastodon.d.ts" />
-import { get, post, AccessToken, InstanceUrl } from "./http.ts";
-import { parse, sleep, compareUrl, sha1sum } from "./lib.ts";
+import { AccessToken, get, InstanceUrl, post } from "./http.ts";
+import { compareUrl, parse, sha1sum, sleep } from "./lib.ts";
 import { clean } from "./removeTrackParam.ts";
 
 import { Element } from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
@@ -32,19 +32,18 @@ async function getFollows(id: string): Promise<Account[]> {
       type: "next" | "prev";
       url: string;
     }
-    const links =
-      _link
-        ?.split(",")
-        .map((s) => s.split(";").map((ss) => ss.trim()))
-        .map((item) => {
-          const [u, t] = item;
-          const url = u.substring(u.indexOf("<") + 1, u.lastIndexOf(">"));
-          const type = t.substring(t.indexOf('rel="') + 5, t.lastIndexOf('"'));
-          return {
-            type,
-            url,
-          } as link;
-        }) ?? [];
+    const links = _link
+      ?.split(",")
+      .map((s) => s.split(";").map((ss) => ss.trim()))
+      .map((item) => {
+        const [u, t] = item;
+        const url = u.substring(u.indexOf("<") + 1, u.lastIndexOf(">"));
+        const type = t.substring(t.indexOf('rel="') + 5, t.lastIndexOf('"'));
+        return {
+          type,
+          url,
+        } as link;
+      }) ?? [];
     const next = links.filter((item) => item.type === "next")[0];
     if (next) {
       url = next.url;
@@ -73,19 +72,18 @@ async function getFollowings(id: string): Promise<Account[]> {
       type: "next" | "prev";
       url: string;
     }
-    const links =
-      _link
-        ?.split(",")
-        .map((s) => s.split(";").map((ss) => ss.trim()))
-        .map((item) => {
-          const [u, t] = item;
-          const url = u.substring(u.indexOf("<") + 1, u.lastIndexOf(">"));
-          const type = t.substring(t.indexOf('rel="') + 5, t.lastIndexOf('"'));
-          return {
-            type,
-            url,
-          } as link;
-        }) ?? [];
+    const links = _link
+      ?.split(",")
+      .map((s) => s.split(";").map((ss) => ss.trim()))
+      .map((item) => {
+        const [u, t] = item;
+        const url = u.substring(u.indexOf("<") + 1, u.lastIndexOf(">"));
+        const type = t.substring(t.indexOf('rel="') + 5, t.lastIndexOf('"'));
+        return {
+          type,
+          url,
+        } as link;
+      }) ?? [];
     const next = links.filter((item) => item.type === "next")[0];
     if (next) {
       url = next.url;
@@ -157,7 +155,7 @@ async function postStatus(
     scheduled_at?: string;
     language?: string;
     "Idempotency-Key"?: string;
-  }
+  },
 ) {
   const resp = await post(
     "/api/v1/statuses",
@@ -181,7 +179,7 @@ async function postStatus(
       "Idempotency-Key": options["Idempotency-Key"]
         ? options["Idempotency-Key"]
         : await sha1sum(status + JSON.stringify(options)),
-    }
+    },
   );
   const json = await resp.json();
   if (resp.ok) {
@@ -210,7 +208,7 @@ async function main() {
       "doUnfollow",
       follows.length,
       followings.length,
-      doUnFollowStatus
+      doUnFollowStatus,
     );
 
     // 每隔6小时检测关注情况
@@ -223,7 +221,7 @@ async function main() {
       return;
     }
     const socket = new WebSocket(
-      `wss://${InstanceUrl}/api/v1/streaming/?access_token=${AccessToken}`
+      `wss://${InstanceUrl}/api/v1/streaming/?access_token=${AccessToken}`,
     );
 
     console.debug('socket.addEventListener("open")');
@@ -282,7 +280,7 @@ async function main() {
           const descendants = await getChildStatus(statusId);
           if (
             descendants.filter(
-              (s) => s.in_reply_to_id === statusId && s.account.id === id
+              (s) => s.in_reply_to_id === statusId && s.account.id === id,
             ).length !== 0
           ) {
             return;
@@ -294,7 +292,7 @@ async function main() {
 
         const doc = parse(content);
         const aList = doc?.querySelectorAll(
-          'a[rel="nofollow noopener noreferrer"]'
+          'a[rel="nofollow noopener noreferrer"]',
         );
         if (!aList) {
           return;
@@ -310,7 +308,7 @@ async function main() {
           urlList.map(async (u) => ({
             before: u,
             after: await clean(u),
-          }))
+          })),
         );
         const texts = urlItems
           .filter((item) => compareUrl(item.before, item.after) === false)
@@ -321,8 +319,7 @@ async function main() {
         if (texts.length === 0) {
           return;
         }
-        const text =
-          "发现含有追踪参数的链接或短链接，详情如下：\n\n" +
+        const text = "发现含有追踪参数的链接或短链接，详情如下：\n\n" +
           texts.join("\n\n") +
           "\n\n" +
           _mentions.map((m) => `@${m}`).join(" ");

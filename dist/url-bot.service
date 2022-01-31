@@ -1,0 +1,13 @@
+[Unit]
+Description=URL Bot Service
+After=network-online.target
+
+[Service]
+Type=simple
+User=urlbot
+RestartSec=5s
+WorkingDirectory=/opt/url_bot/
+ExecStart=/usr/bin/deno run --allow-net --allow-env --allow-read=./ --unstable src/index.ts
+
+[Install]
+WantedBy=default.target

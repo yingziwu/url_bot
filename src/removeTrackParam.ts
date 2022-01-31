@@ -1,10 +1,10 @@
 import {
-  specific,
-  whitelist,
+  asterisk,
   general,
   shortURL,
-  asterisk,
+  specific,
   ValueOf,
+  whitelist,
 } from "./rules.ts";
 
 function find(host: string, list: typeof specific | typeof whitelist) {
@@ -139,7 +139,7 @@ if (import.meta.main) {
     const args = parse(Deno.args);
     args._.forEach(async (url) => {
       console.info(
-        `原URL：${url}\n处理后URL：${await clean(url as string)}\n\n`
+        `原URL：${url}\n处理后URL：${await clean(url as string)}\n\n`,
       );
     });
   })();
