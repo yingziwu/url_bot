@@ -1,0 +1,6 @@
+deps/
+registries/
+.vscode/
+gen/
+deps/
+init.sh
