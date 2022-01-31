@@ -122,6 +122,9 @@ async function expandUrl(_url: string, depth?: number): Promise<string> {
   const handler = shortURL.get(host);
   if (handler) {
     const out = await handler(url.href);
+    if (out === url.href) {
+      return url.href;
+    }
     return expandUrl(out, depth);
   } else {
     return url.href;
