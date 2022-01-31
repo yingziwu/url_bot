@@ -244,6 +244,7 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     { pathname: "/sf", search: "top" },
     { pathname: "/sf", search: "_t" },
   ],
+  "m.sohu.com": ["pvid"],
 };
 const whitelist: Record<string, (string | RegExp | rule)[] | true> = {
   "ramtrucks.com": [{ pathname: "/mediaserver/", search: true }],

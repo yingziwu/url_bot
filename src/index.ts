@@ -135,6 +135,16 @@ async function doUnfollow(follows: Account[], followings: Account[]) {
   return await Promise.all(tasks);
 }
 
+async function getChildStatus(id: string) {
+  const url = `/api/v1/statuses/${id}/context`;
+  const resp = await get(url);
+  const json = (await resp.json()) as {
+    ancestors: Status[];
+    descendants: Status[];
+  };
+  return json.descendants;
+}
+
 async function postStatus(
   status: string,
   options: {
@@ -234,20 +244,45 @@ async function main() {
       };
       if (event === "update") {
         const data = JSON.parse(payload) as Status;
-        update(data);
+        handlerStatus(data);
       } else if (event === "notification") {
         const data = JSON.parse(payload) as Notification;
-        notification(data);
+        if (data.type === "follow") {
+          followNotification(data);
+        }
+        if (data.type === "mention") {
+          if (data.status) {
+            handlerStatus(data.status);
+          }
+        }
       } else if (["delete", "filters_changed"].includes(event)) {
         // pass
       } else {
         console.info(event, JSON.parse(payload));
       }
 
-      async function update(data: Status) {
-        const { content, account, mentions, id: statusId, language } = data;
+      async function handlerStatus(data: Status) {
+        const {
+          content,
+          account,
+          mentions,
+          id: statusId,
+          language,
+          created_at,
+        } = data;
         if (account.id === id) {
           return;
+        }
+        // 发贴时间差大于1小时，检查子结点，以防重复发嘟
+        if (Date.now() - new Date(created_at).getTime() > 1000 * 60 * 60) {
+          const descendants = await getChildStatus(statusId);
+          if (
+            descendants.filter(
+              (s) => s.in_reply_to_id === statusId && s.account.id === id
+            ).length !== 0
+          ) {
+            return;
+          }
         }
         let _mentions = mentions.map((m) => m.acct);
         _mentions.push(account.acct);
@@ -257,47 +292,46 @@ async function main() {
         const aList = doc?.querySelectorAll(
           'a[rel="nofollow noopener noreferrer"]'
         );
-        if (aList) {
-          let urlList = Array.from(aList)
-            .map((a) => (a as Element).getAttribute("href")?.trim())
-            .filter((u) => u !== undefined) as string[];
-          urlList = Array.from(new Set(urlList));
-          if (urlList.length === 0) {
-            return;
-          }
-          const _texts = await Promise.all(
-            urlList.map(async (u) => ({
-              before: u,
-              after: await clean(u),
-            }))
-          );
-          const texts = _texts
-            .filter((item) => compareUrl(item.before, item.after) === false)
-            .map((item) => {
-              console.info(item);
-              return `原链接：${item.before}\n净化后链接：${item.after}`;
-            });
-          if (texts.length === 0) {
-            return;
-          }
-          const text =
-            "发现含有追踪参数的链接或短链接，详情如下：\n\n" +
-            texts.join("\n\n") +
-            "\n\n" +
-            _mentions.map((m) => `@${m}`).join(" ");
-          postStatus(text, {
-            in_reply_to_id: statusId,
-            language: language ?? undefined,
-            visibility: "unlisted",
-          });
+        if (!aList) {
+          return;
         }
+        let urlList = Array.from(aList)
+          .map((a) => (a as Element).getAttribute("href")?.trim())
+          .filter((u) => u !== undefined) as string[];
+        urlList = Array.from(new Set(urlList));
+        if (urlList.length === 0) {
+          return;
+        }
+        const urlItems = await Promise.all(
+          urlList.map(async (u) => ({
+            before: u,
+            after: await clean(u),
+          }))
+        );
+        const texts = urlItems
+          .filter((item) => compareUrl(item.before, item.after) === false)
+          .map((item) => {
+            console.info(item);
+            return `原链接：${item.before}\n净化后链接：${item.after}`;
+          });
+        if (texts.length === 0) {
+          return;
+        }
+        const text =
+          "发现含有追踪参数的链接或短链接，详情如下：\n\n" +
+          texts.join("\n\n") +
+          "\n\n" +
+          _mentions.map((m) => `@${m}`).join(" ");
+        postStatus(text, {
+          in_reply_to_id: statusId,
+          language: language ?? undefined,
+          visibility: "unlisted",
+        });
       }
 
-      function notification(data: Notification) {
-        if (data.type === "follow") {
-          console.info(`[streaming][notification] follow ${data.account.id}`);
-          follow(data.account.id);
-        }
+      function followNotification(data: Notification) {
+        console.info(`[streaming][notification] follow ${data.account.id}`);
+        follow(data.account.id);
       }
     });
 
