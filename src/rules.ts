@@ -113,7 +113,7 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
   ],
   "douban.com": ["_i", "_dtcc"],
   "share.api.weibo.cn": ["weibo_id"],
-  "weibo.com": ["pagetype"],
+  "weibo.com": ["pagetype", "from"],
   "mp.weixin.qq.com": [
     "chksm",
     "key",
@@ -289,7 +289,11 @@ const specificExport = converAsterisk(specific);
 const whitelistExport = converAsterisk(whitelist);
 export { specificExport as specific, whitelistExport as whitelist };
 
-async function get(url: string, headers?: Record<string, string>) {
+async function get(
+  url: string,
+  headers?: Record<string, string>,
+  redirect: RequestRedirect = "follow",
+) {
   if (headers === undefined) {
     headers = {
       Accept:
@@ -312,7 +316,7 @@ async function get(url: string, headers?: Record<string, string>) {
   console.debug(`[GET] ${url}`);
   const response = await fetch(url, {
     headers,
-    redirect: "follow",
+    redirect,
     signal,
   });
   clearTimeout(tid);
@@ -371,7 +375,18 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
         }
       } else {
         await resp.body?.cancel();
-        return resp.url;
+        if (resp.url.startsWith("https://passport.weibo.com/visitor/")) {
+          const resp = await get(url, undefined, "manual");
+          if (resp.status === 302) {
+            const location = resp.headers.get("location");
+            if (location) {
+              return location;
+            }
+          }
+          throw new Error(`展开短网址时出错：${url}`);
+        } else {
+          return resp.url;
+        }
       }
     },
   ],

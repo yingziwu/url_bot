@@ -77,6 +77,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://t.cn/A6xC9mPC"),
     "http://www.zj.gov.cn/art/2020/8/25/art_1229277996_42332.html",
   );
+  assertEquals(
+    await clean("http://t.cn/A6iXJDSr"),
+    "https://video.weibo.com/show?fid=1034%3A4731764124614744",
+  );
   // assertEquals(
   //   await clean("http://fumacrom.com/3ctzC"),
   //   "https://cxybb.com/article/qq_43342406/84451337"
