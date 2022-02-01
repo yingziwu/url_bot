@@ -89,7 +89,7 @@ export const general = [
   "dt_platform",
   "spm",
   "scm",
-  "refer_uri_app"
+  "refer_uri_app",
 ];
 interface rule {
   pathname: string;
@@ -268,7 +268,7 @@ export type asterisk = Map<RegExp, ValueOf<typeof specific | typeof whitelist>>;
 export function getAsteriskRegExp(input: string) {
   const reText = input
     .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-    .replace("\\*", ".*");
+    .replaceAll("\\*", ".*");
   const re = new RegExp(reText);
   return re;
 }
@@ -293,23 +293,20 @@ export { specificExport as specific, whitelistExport as whitelist };
 
 async function get(
   url: string,
-  headers?: Record<string, string>,
+  headers: Record<string, string> = {
+    Accept:
+      "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language":
+      "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "cross-site",
+    "User-Agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4495.0 Safari/537.36",
+    "Upgrade-Insecure-Requests": "1",
+  },
   redirect: RequestRedirect = "follow",
 ) {
-  if (headers === undefined) {
-    headers = {
-      Accept:
-        "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-      "Accept-Language":
-        "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
-      "Sec-Fetch-Dest": "document",
-      "Sec-Fetch-Mode": "navigate",
-      "Sec-Fetch-Site": "cross-site",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4495.0 Safari/537.36",
-      "Upgrade-Insecure-Requests": "1",
-    };
-  }
   const controller = new AbortController();
   const signal = controller.signal;
   const tid = setTimeout(() => {
