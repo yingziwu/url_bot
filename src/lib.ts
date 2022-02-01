@@ -1,4 +1,9 @@
-import { DOMParser } from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
+import {
+  DOMParser,
+  Element,
+  Node,
+  Text,
+} from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
 
 export function parse(input: string) {
   const doc = new DOMParser().parseFromString("", "text/html");
@@ -8,6 +13,26 @@ export function parse(input: string) {
     return div;
   } else {
     throw new Error("parse input string error!");
+  }
+}
+
+export function getTexts(elem: Element) {
+  const texts = [...findTextNode(elem)].filter((t) => t !== null).map((
+    t,
+  ) => (t as Text).textContent.trim());
+  return texts;
+
+  function* findTextNode(elem: Node): Generator<Text | null> {
+    if (elem instanceof Text) {
+      yield elem;
+    }
+    if (elem.childNodes.length !== 0) {
+      for (const node of Array.from(elem.childNodes)) {
+        yield* findTextNode(node);
+      }
+    } else {
+      yield null;
+    }
   }
 }
 

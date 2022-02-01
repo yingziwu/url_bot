@@ -1,13 +1,9 @@
 ///  <reference types="./mastodon.d.ts" />
 import { AccessToken, get, InstanceUrl, post } from "./http.ts";
-import { compareUrl, parse, sha1sum, sleep } from "./lib.ts";
+import { compareUrl, getTexts, parse, sha1sum, sleep } from "./lib.ts";
 import { clean } from "./removeTrackParam.ts";
 
-import {
-  Element,
-  Node,
-  Text,
-} from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
+import { Element } from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
 
 async function verifyToken(): Promise<Account> {
   const resp = await get("/api/v1/accounts/verify_credentials");
@@ -275,6 +271,7 @@ async function main() {
           id: statusId,
           language,
           created_at,
+          visibility,
         } = data;
         if (duplicateCheck()) {
           return;
@@ -292,7 +289,7 @@ async function main() {
           postStatus(statusText, {
             in_reply_to_id: statusId,
             language: language ?? undefined,
-            visibility: "unlisted",
+            visibility: visibility === "direct" ? "direct" : "unlisted",
           }).catch((error) => {
             console.error("发送嘟文失败！");
             console.error(error);
@@ -333,7 +330,8 @@ async function main() {
           return Array.from(new Set(ul));
         }
         /** 转发贴检测
-         * 发贴时间差大于2分钟，检查子嘟文，以防重复发嘟 */
+         * 发贴时间差大于2分钟，检查子嘟文，以防重复发嘟
+         */
         async function descendantsCheck() {
           if (Date.now() - new Date(created_at).getTime() > 1000 * 60 * 2) {
             const descendants = await getChildStatus(statusId);
@@ -376,26 +374,6 @@ async function main() {
       function pingCommandTest(data: Status) {
         const elem = parse(data.content);
         return getTexts(elem).some((text) => /(^|\s+)!ping(\s+|$)/.test(text));
-
-        function getTexts(elem: Element) {
-          const texts = [...findTextNode(elem)].filter((t) => t !== null).map((
-            t,
-          ) => (t as Text).textContent.trim());
-          return texts;
-
-          function* findTextNode(elem: Node): Generator<Text | null> {
-            if (elem instanceof Text) {
-              yield elem;
-            }
-            if (elem.childNodes.length !== 0) {
-              for (const node of Array.from(elem.childNodes)) {
-                yield* findTextNode(node);
-              }
-            } else {
-              yield null;
-            }
-          }
-        }
       }
       function handlePing(data: Status) {
         const {
