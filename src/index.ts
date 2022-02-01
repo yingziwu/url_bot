@@ -263,6 +263,9 @@ async function main() {
       }
 
       async function handlerStatus(data: Status) {
+        if (data.reblog) {
+          data = data.reblog;
+        }
         const {
           content,
           account,

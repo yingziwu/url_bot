@@ -58,7 +58,7 @@ interface Status {
   visibility: "public" | "unlisted" | "private" | "direct";
   language: string | null;
   uri: string;
-  url: string;
+  url: string | null;
   replies_count: number;
   reblogs_count: number;
   favourites_count: number;
@@ -66,9 +66,11 @@ interface Status {
   reblogged: boolean;
   muted: boolean;
   bookmarked: boolean;
+  pinned?: boolean;
   content: string;
-  reblog: null;
-  application: {
+  text?: string | null;
+  reblog: null | Status;
+  application?: {
     name: string;
     website: null | string;
   };
