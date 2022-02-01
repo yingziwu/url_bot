@@ -89,6 +89,7 @@ export const general = [
   "dt_platform",
   "spm",
   "scm",
+  "refer_uri_app"
 ];
 interface rule {
   pathname: string;
