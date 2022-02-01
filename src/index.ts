@@ -191,7 +191,7 @@ async function postStatus(
 
 let socketExist = false;
 async function main() {
-  const { id } = await verifyToken();
+  const { id, acct } = await verifyToken();
   syncFollowRelations();
   openStream();
 
@@ -308,9 +308,11 @@ async function main() {
         }
         /** 获取 mention 列表 */
         function getMentions() {
-          const ms = mentions.map((m) => m.acct);
-          ms.push(account.acct);
-          return Array.from(new Set(ms));
+          const _ms = mentions.map((m) => m.acct);
+          const ms = new Set(_ms);
+          ms.add(account.acct);
+          ms.delete(acct);
+          return Array.from(ms);
         }
         /** 获取 URL 列表 */
         function getUrlList() {
