@@ -291,6 +291,9 @@ async function main() {
             in_reply_to_id: statusId,
             language: language ?? undefined,
             visibility: "unlisted",
+          }).catch((error) => {
+            console.error("发送嘟文失败！");
+            console.error(error);
           });
         }
 

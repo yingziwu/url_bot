@@ -5,6 +5,7 @@ After=network-online.target
 [Service]
 Type=simple
 User=urlbot
+Restart=on-failure
 RestartSec=5s
 WorkingDirectory=/opt/url_bot/
 ExecStart=/usr/bin/deno run --allow-net --allow-env --allow-read=./ --unstable src/index.ts
