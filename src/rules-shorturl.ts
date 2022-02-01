@@ -45,8 +45,8 @@ async function follow(url: string, getFunc = get) {
 async function extractFromHTML(url: string, selector: string) {
   const resp = await get(url);
   if (new URL(resp.url).hostname === new URL(url).hostname) {
-    const doc = parse(await resp.text());
-    const out = doc?.querySelector(selector)?.getAttribute("href")?.trim();
+    const elem = parse(await resp.text());
+    const out = elem.querySelector(selector)?.getAttribute("href")?.trim();
     if (out) {
       return out;
     } else {
@@ -230,9 +230,9 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
     async (url) => {
       const resp = await get(url);
       if (new URL(resp.url).hostname === "t.cn") {
-        const doc = parse(await resp.text());
-        const out = doc
-          ?.querySelector(".open-url > a")
+        const elem = parse(await resp.text());
+        const out = elem
+          .querySelector(".open-url > a")
           ?.getAttribute("href")
           ?.trim();
         if (out) {

@@ -1,8 +1,14 @@
 import { DOMParser } from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
 
 export function parse(input: string) {
-  const doc = new DOMParser().parseFromString(input, "text/html");
-  return doc;
+  const doc = new DOMParser().parseFromString("", "text/html");
+  if (doc) {
+    const div = doc.createElement("div");
+    div.innerHTML = input;
+    return div;
+  } else {
+    throw new Error("parse input string error!");
+  }
 }
 
 export function sleep(ms: number) {

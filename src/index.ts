@@ -167,17 +167,11 @@ async function postStatus(
     "/api/v1/statuses",
     {
       status,
-      //@ts-ignore
       poll: null,
-      //@ts-ignore
       sensitive: false,
-      //@ts-ignore
       spoiler_text: "",
-      //@ts-ignore
       media_ids: [],
-      //@ts-ignore
       in_reply_to_id: null,
-      //@ts-ignore
       visibility: "public",
       ...options,
     },
@@ -245,15 +239,19 @@ async function main() {
       };
       if (event === "update") {
         const data = JSON.parse(payload) as Status;
-        handlerStatus(data);
+        handleStatus(data);
       } else if (event === "notification") {
         const data = JSON.parse(payload) as Notification;
         if (data.type === "follow") {
-          followNotification(data);
+          handleFollow(data);
         }
         if (data.type === "mention") {
           if (data.status) {
-            handlerStatus(data.status);
+            if (pingCommandTest(data.status)) {
+              handlePing(data.status);
+            } else {
+              handleStatus(data.status);
+            }
           }
         }
       } else if (["delete", "filters_changed"].includes(event)) {
@@ -262,7 +260,7 @@ async function main() {
         console.info(event, JSON.parse(payload));
       }
 
-      async function handlerStatus(data: Status) {
+      async function handleStatus(data: Status) {
         if (data.reblog) {
           data = data.reblog;
         }
@@ -282,7 +280,7 @@ async function main() {
         if (urlList.length === 0) {
           return;
         }
-        if (await reblogerCheck()) {
+        if (await descendantsCheck()) {
           return;
         }
         const statusText = await getStatusText();
@@ -316,8 +314,8 @@ async function main() {
         }
         /** 获取 URL 列表 */
         function getUrlList() {
-          const doc = parse(content);
-          const aList = doc?.querySelectorAll(
+          const elem = parse(content);
+          const aList = elem.querySelectorAll(
             'a[rel="nofollow noopener noreferrer"]',
           );
           if (!aList) {
@@ -330,13 +328,14 @@ async function main() {
         }
         /** 转发贴检测
          * 发贴时间差大于2分钟，检查子嘟文，以防重复发嘟 */
-        async function reblogerCheck() {
+        async function descendantsCheck() {
           if (Date.now() - new Date(created_at).getTime() > 1000 * 60 * 2) {
             const descendants = await getChildStatus(statusId);
             return descendants.filter(
               (s) => s.in_reply_to_id === statusId && s.account.id === id,
             ).length !== 0;
           }
+          return false;
         }
         /** 获取嘟文文本 */
         async function getStatusText() {
@@ -363,9 +362,34 @@ async function main() {
         }
       }
 
-      function followNotification(data: Notification) {
+      function handleFollow(data: Notification) {
         console.info(`[streaming][notification] follow ${data.account.id}`);
         follow(data.account.id);
+      }
+
+      function pingCommandTest(data: Status) {
+        const elem = parse(data.content);
+        return /(^|\s+)!ping(\s+|$)/.test(elem.innerText);
+      }
+      function handlePing(data: Status) {
+        const {
+          id: statusId,
+          account,
+          created_at,
+          visibility,
+        } = data;
+        const statusText = `pong!\nping at ${created_at}\npong at ${
+          new Date().toISOString()
+        }\ntook ${
+          Date.now() - new Date(created_at).getTime()
+        } ms\n\n@${account.acct}`;
+        postStatus(statusText, {
+          in_reply_to_id: statusId,
+          visibility,
+        }).catch((error) => {
+          console.error("发送嘟文失败！");
+          console.error(error);
+        });
       }
     });
 
