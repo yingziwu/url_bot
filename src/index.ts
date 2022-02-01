@@ -276,8 +276,8 @@ async function main() {
         if (account.id === id) {
           return;
         }
-        // 发贴时间差大于1小时，检查子结点，以防重复发嘟
-        if (Date.now() - new Date(created_at).getTime() > 1000 * 60 * 60) {
+        // 发贴时间差大于2分钟，检查子嘟文，以防重复发嘟
+        if (Date.now() - new Date(created_at).getTime() > 1000 * 60 * 2) {
           const descendants = await getChildStatus(statusId);
           if (
             descendants.filter(
