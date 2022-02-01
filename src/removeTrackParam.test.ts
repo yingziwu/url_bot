@@ -17,8 +17,8 @@ Deno.test("Remove Track Param", async () => {
     "https://www.reddit.com/comments/sgt7hh",
   );
   assertEquals(
-    await clean("https://v.redd.it/n54nilefa3b61I"),
-    "https://www.reddit.com/r/BeAmazed/comments/kwf2uj/when_it_snows_for_an_hour_in_finland/",
+    await clean("https://v.redd.it/j6b86qlkhw761"),
+    "https://www.reddit.com/video/j6b86qlkhw761",
   );
   assertEquals(
     await clean("https://we.tl/t-SLdvGw6i3k"),
