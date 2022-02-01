@@ -1,11 +1,11 @@
 import {
   asterisk,
   general,
-  shortURL,
   specific,
   ValueOf,
   whitelist,
-} from "./rules.ts";
+} from "./rules-trackparm.ts";
+import { shortURL } from "./rules-shorturl.ts";
 
 function find(host: string, list: typeof specific | typeof whitelist) {
   const aster = list["*"] as asterisk;
