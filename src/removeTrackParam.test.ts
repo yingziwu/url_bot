@@ -81,6 +81,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://3.ly/aeHld"),
     "https://mastodon.social/@Mastodon/107718287079955422",
   );
+  assertEquals(
+    await clean("https://forms.gle/wU11nYMy73EiDFk76"),
+    "https://docs.google.com/forms/d/e/1FAIpQLSeEK07O4FO6zyztfHN4mTkZ8yNV8NRBaPIOuZnZlqKUhqQVZg/viewform?usp=send_form",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(

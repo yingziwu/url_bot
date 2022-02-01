@@ -22,13 +22,18 @@ async function get(
     controller.abort("Timeout!");
   }, 10000);
   console.debug(`[GET] ${url}`);
-  const response = await fetch(url, {
-    headers,
-    redirect,
-    signal,
-  });
-  clearTimeout(tid);
-  return response;
+  try {
+    const response = await fetch(url, {
+      headers,
+      redirect,
+      signal,
+    });
+    clearTimeout(tid);
+    return response;
+  } catch (error) {
+    clearTimeout(tid);
+    throw error;
+  }
 }
 
 async function follow(url: string, getFunc = get) {
@@ -218,6 +223,7 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["tinyurl.com", follow],
   ["goo.gl", follow],
   ["urlzs.com", follow],
+  ["forms.gle", follow],
   [
     "t.co",
     (url) => {
