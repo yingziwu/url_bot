@@ -123,6 +123,10 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "scene",
     "srcid",
     "nettype",
+    "from",
+    "subscene",
+    "clicktime",
+    "enterid",
   ],
   "twitter.com": ["ref_src", "ref_url", "s", "t"],
   "reddit.com": [
