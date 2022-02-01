@@ -42,6 +42,22 @@ async function follow(url: string, getFunc = get) {
   }
 }
 
+async function extractFromHTML(url: string, selector: string) {
+  const resp = await get(url);
+  if (new URL(resp.url).hostname === new URL(url).hostname) {
+    const doc = parse(await resp.text());
+    const out = doc?.querySelector(selector)?.getAttribute("href")?.trim();
+    if (out) {
+      return out;
+    } else {
+      throw new Error(`展开短网址时出错：${url}`);
+    }
+  } else {
+    await resp.body?.cancel();
+    return resp.url;
+  }
+}
+
 async function AdFly(url: string) {
   const resp = await get(url);
   // https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/filters.txt
@@ -201,7 +217,7 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["w.url.cn", follow],
   ["tinyurl.com", follow],
   ["goo.gl", follow],
-  ["ddl.ink", follow],
+  ["urlzs.com", follow],
   [
     "t.co",
     (url) => {
@@ -261,7 +277,11 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
       }
     },
   ],
-  ["urlzs.com", follow],
+  [
+    "t.tl",
+    (url) =>
+      extractFromHTML(url, ".panel-body > p:nth-child(1) > a:nth-child(1)"),
+  ],
   // bitly.com
   ["j.mp", follow],
   ["bit.ly", follow],
@@ -279,21 +299,12 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ],
   // 6du.in
   ["t-t.ink", follow],
-  ["dw-z.ink", async (url) => {
-    const resp = await get(url);
-    if (new URL(resp.url).hostname === "dw-z.ink") {
-      const doc = parse(await resp.text());
-      const out = doc?.querySelector(
-        "div.main-hint > div.main-hint-text > span > a",
-      )?.getAttribute("href")?.trim();
-      if (out) {
-        return out;
-      } else {
-        throw new Error(`展开短网址时出错：${url}`);
-      }
-    } else {
-      await resp.body?.cancel();
-      return resp.url;
-    }
-  }],
+  ["dw-z.ink", (url) =>
+    extractFromHTML(
+      url,
+      "div.main-hint > div.main-hint-text > span > a",
+    )],
+  // tyson.cool
+  ["ddl.ink", follow],
+  ["tsd.ink", follow],
 ]);

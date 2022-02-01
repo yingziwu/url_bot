@@ -4,6 +4,7 @@ import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
 Deno.test("Remove Track Param", async () => {
   console.info("开始测试短链接……");
+  console.info("测试简单短网址规则");
   assertEquals(
     await clean("https://b23.tv/d3BTHVL"),
     "https://www.bilibili.com/video/BV1uP4y1n7Zf?p=1",
@@ -72,7 +73,12 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://ddl.ink/9yI4"),
     "https://www.bilibili.com/video/BV1r34y1277o?p=1",
   );
+  assertEquals(
+    await clean("https://tsd.ink/tsywd"),
+    "https://weidian.com/item.html?itemID=4296908918&spider_token=e9dd",
+  );
 
+  console.info("测试复杂短网址规则");
   assertEquals(
     await clean("https://t.co/KODJKyanrb"),
     "https://harrydenley.com/faking-twitter-unfurling/",
@@ -100,6 +106,10 @@ Deno.test("Remove Track Param", async () => {
   assertEquals(
     await clean("http://dw-z.ink/0i1eI"),
     "https://example.com/",
+  );
+  assertEquals(
+    await clean("https://t.tl/5pqk"),
+    "https://segmentfault.com/q/1010000014169010",
   );
 
   console.info("开始测试黑名单……");
