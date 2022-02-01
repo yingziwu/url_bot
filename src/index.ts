@@ -3,7 +3,11 @@ import { AccessToken, get, InstanceUrl, post } from "./http.ts";
 import { compareUrl, parse, sha1sum, sleep } from "./lib.ts";
 import { clean } from "./removeTrackParam.ts";
 
-import { Element } from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
+import {
+  Element,
+  Node,
+  Text,
+} from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
 
 async function verifyToken(): Promise<Account> {
   const resp = await get("/api/v1/accounts/verify_credentials");
@@ -371,7 +375,27 @@ async function main() {
 
       function pingCommandTest(data: Status) {
         const elem = parse(data.content);
-        return /(^|\s+)!ping(\s+|$)/.test(elem.innerText);
+        return getTexts(elem).some((text) => /(^|\s+)!ping(\s+|$)/.test(text));
+
+        function getTexts(elem: Element) {
+          const texts = [...findTextNode(elem)].filter((t) => t !== null).map((
+            t,
+          ) => (t as Text).textContent.trim());
+          return texts;
+
+          function* findTextNode(elem: Node): Generator<Text | null> {
+            if (elem instanceof Text) {
+              yield elem;
+            }
+            if (elem.childNodes.length !== 0) {
+              for (const node of Array.from(elem.childNodes)) {
+                yield* findTextNode(node);
+              }
+            } else {
+              yield null;
+            }
+          }
+        }
       }
       function handlePing(data: Status) {
         const {
