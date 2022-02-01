@@ -104,7 +104,10 @@ async function follow(id: string) {
     throw new Error(JSON.stringify(json));
   }
 }
-async function doFollow(follows: Account[], followings: Account[]) {
+/** 自动回关
+ * 回关所有关注自己的用户
+ */
+async function syncFollow(follows: Account[], followings: Account[]) {
   const followingIds = followings.map((f) => f.id);
 
   const tasks = follows
@@ -123,7 +126,10 @@ async function unfollow(id: string) {
     throw new Error(JSON.stringify(json));
   }
 }
-async function doUnfollow(follows: Account[], followings: Account[]) {
+/** 自动取关
+ * 自动取关不再关注自己的用户
+ */
+async function syncUnfollow(follows: Account[], followings: Account[]) {
   const followIds = follows.map((f) => f.id);
 
   const tasks = followings
@@ -192,31 +198,27 @@ async function postStatus(
 let socketExist = false;
 async function main() {
   const { id } = await verifyToken();
-  _follow();
-  _streaming();
+  syncFollowRelations();
+  openStream();
 
-  async function _follow() {
+  async function syncFollowRelations() {
     const follows = await getFollows(id);
     const followings = await getFollowings(id);
 
-    // 启动时不再发起关注请求
-    // const doFollowStatus = await doFollow(follows, followings);
-    // console.info("doFollow", follows.length, followings.length, doFollowStatus);
-
-    const doUnFollowStatus = await doUnfollow(follows, followings);
+    const syncUnfollowStatus = await syncUnfollow(follows, followings);
     console.info(
-      "doUnfollow",
+      "syncUnfollow",
       follows.length,
       followings.length,
-      doUnFollowStatus,
+      syncUnfollowStatus,
     );
 
     // 每隔6小时检测关注情况
     await sleep(1000 * 3600 * 6);
-    _follow();
+    syncFollowRelations();
   }
 
-  function _streaming() {
+  function openStream() {
     console.info(`socketExist: ${socketExist}`);
     if (socketExist) {
       return;
@@ -367,7 +369,7 @@ async function main() {
       setTimeout(() => {
         Deno.removeSignalListener("SIGINT", sigIntHandler);
         console.info("[websocket] Try to reopen websocket……");
-        _streaming();
+        openStream();
       }, 1000 * 30);
     });
 
