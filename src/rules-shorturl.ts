@@ -194,7 +194,6 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["b23.tv", follow],
   ["t.ly", follow],
   ["youtu.be", follow],
-  ["bit.ly", follow],
   ["is.gd", follow],
   ["dwz.cn", follow],
   ["sourl.cn", follow],
@@ -202,6 +201,7 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["w.url.cn", follow],
   ["tinyurl.com", follow],
   ["goo.gl", follow],
+  ["ddl.ink", follow],
   [
     "t.co",
     (url) => {
@@ -262,6 +262,9 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
     },
   ],
   ["urlzs.com", follow],
+  // bitly.com
+  ["j.mp", follow],
+  ["bit.ly", follow],
   // reddit
   ["redd.it", follow],
   ["v.redd.it", follow],

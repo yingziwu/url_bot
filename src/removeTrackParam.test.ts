@@ -68,6 +68,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("http://t-t.ink/0i5e_"),
     "https://example.com/",
   );
+  assertEquals(
+    await clean("https://ddl.ink/9yI4"),
+    "https://www.bilibili.com/video/BV1r34y1277o?p=1",
+  );
 
   assertEquals(
     await clean("https://t.co/KODJKyanrb"),
