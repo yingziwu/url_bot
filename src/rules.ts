@@ -333,11 +333,160 @@ async function follow(url: string, getFunc = get) {
   }
 }
 
+async function AdFly(url: string) {
+  const resp = await get(url);
+  // https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/filters.txt
+  const domainList = [
+    "activeation.com",
+    "activetect.net",
+    "adf.ly",
+    "atabencot.net",
+    "atharori.net",
+    "atomcurve.com",
+    "atominik.com",
+    "auto-login-xxx.com",
+    "ay.gy",
+    "babblecase.com",
+    "baymaleti.net",
+    "bitigee.com",
+    "bluenik.com",
+    "brightvar.bid",
+    "briskgram.net",
+    "brisktopia.com",
+    "casualient.com",
+    "chinnica.net",
+    "cinebo.net",
+    "clearload.bid",
+    "coginator.com",
+    "cogismith.com",
+    "cowner.net",
+    "dl.android-zone.org",
+    "dl.underclassblog.com",
+    "dataurbia.com",
+    "download.replaymod.com",
+    "fiaharam.net",
+    "gatustox.net",
+    "gdanstum.net",
+    "gloyah.net",
+    "gusimp.net",
+    "j.gs",
+    "kaitect.com",
+    "kializer.com",
+    "kibuilder.com",
+    "kimechanic.com",
+    "larati.net",
+    "meriabub.net",
+    "microify.com",
+    "mmoity.com",
+    "picocurl.com",
+    "pintient.com",
+    "q.gs",
+    "quainator.com",
+    "quamiller.com",
+    "queuecosm.bid",
+    "rd.consoletarget.com",
+    "riffhold.com",
+    "scuseami.net",
+    "simizer.com",
+    "skamaker.com",
+    "skamason.com",
+    "sostieni.ilwebmaster21.com",
+    "swiftviz.net",
+    "thouth.net",
+    "threadsphere.bid",
+    "tinyical.com",
+    "tinyium.com",
+    "twineer.com",
+    "uclaut.net",
+    "usfinf.net",
+    "viahold.com",
+    "vializer.com",
+    "viwright.com",
+    "xterca.net",
+    "yabuilder.com",
+    "yamechanic.com",
+    "yoalizer.com",
+    "yobuilder.com",
+    "yoineer.com",
+    "yoitect.com",
+    "zo.ee",
+    "zoee.xyz",
+    "bee.anime-loads.org",
+    "out.underhentai.net",
+    "gdanstum.net",
+    "taraa.xyz",
+    "mineiroloko.co",
+    "aporasal.net",
+    "onizatop.net",
+    "hurirk.net,regecish.net",
+    "zeybui.net",
+    "download.cracksurl.com",
+    "darenjarvis.pro",
+    "xervoo.net",
+  ];
+  const { hostname } = new URL(resp.url);
+  if (domainList.includes(hostname)) {
+    const text = await resp.text();
+    const ysmm = text.split("\n").filter((l) => l.includes("var ysmm = '")).map(
+      (l) => l.trim().replace("var ysmm = '", "").replace("';", ""),
+    )?.[0];
+    if (!ysmm) {
+      throw new Error(`展开链接时出错！ ${url}`);
+    }
+    // https://github.com/gorhill/uBlock/blob/a94df7f3b27080ae2dcb3b914ace39c0c294d2f6/assets/resources/scriptlets.js#L805
+    // Based on AdsBypasser
+    // License:
+    //   https://github.com/adsbypasser/adsbypasser/blob/master/LICENSE
+    const isDigit = /^\d$/;
+    const handler = (encodedURL: string) => {
+      let var1 = "", var2 = "", i;
+      for (i = 0; i < encodedURL.length; i++) {
+        if (i % 2 === 0) {
+          var1 = var1 + encodedURL.charAt(i);
+        } else {
+          var2 = encodedURL.charAt(i) + var2;
+        }
+      }
+      let data = (var1 + var2).split("");
+      for (i = 0; i < data.length; i++) {
+        if (isDigit.test(data[i])) {
+          for (let ii: number = i + 1; ii < data.length; ii++) {
+            if (isDigit.test(data[ii])) {
+              const temp = parseInt(data[i], 10) ^ parseInt(data[ii], 10);
+              if (temp < 10) {
+                data[i] = temp.toString();
+              }
+              i = ii;
+              break;
+            }
+          }
+        }
+      }
+      const s = data.join("");
+      const decodedURL = window.atob(s).slice(16, -16);
+      return decodedURL;
+    };
+    const _durl = handler(ysmm);
+    const durl = new URL(_durl);
+    const dest = durl.searchParams.get("dest");
+    if (dest) {
+      return dest;
+    } else {
+      return follow(_durl);
+    }
+  } else {
+    await resp.body?.cancel();
+    return resp.url;
+  }
+}
+
 export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["we.tl", follow],
   ["b23.tv", follow],
+  // reddit
   ["redd.it", follow],
   ["v.redd.it", follow],
+
   ["youtu.be", follow],
   ["bit.ly", follow],
   ["is.gd", follow],
@@ -346,9 +495,11 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["w.url.cn", follow],
   ["tinyurl.com", follow],
   ["goo.gl", follow],
+  // suolink.cn
   ["mtw.so", follow],
   ["u6v.cn", follow],
   ["m6z.cn", follow],
+
   ["t.ly", follow],
   [
     "t.co",
@@ -408,5 +559,9 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
         return resp.url;
       }
     },
+  ],
+  [
+    "fumacrom.com",
+    AdFly,
   ],
 ]);

@@ -81,10 +81,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("http://t.cn/A6iXJDSr"),
     "https://video.weibo.com/show?fid=1034%3A4731764124614744",
   );
-  // assertEquals(
-  //   await clean("http://fumacrom.com/3ctzC"),
-  //   "https://cxybb.com/article/qq_43342406/84451337"
-  // );
+  assertEquals(
+    await clean("http://fumacrom.com/3ctzC"),
+    "https://cxybb.com/article/qq_43342406/84451337"
+  );
 
   console.info("开始测试黑名单……");
   assertEquals(
