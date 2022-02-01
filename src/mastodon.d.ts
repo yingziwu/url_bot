@@ -92,7 +92,7 @@ interface Attachment {
   description: string | null;
   blurhash: string | null;
   text_url: string;
-  meta: object;
+  meta: Record<string, unknown>;
 }
 
 interface Mention {
@@ -179,4 +179,16 @@ interface ScheduledStatus {
     application_id: number;
   };
   media_attachments: string[];
+}
+
+interface Trend {
+  name: string;
+  url: string;
+  history: TrendHistory[];
+}
+
+interface TrendHistory {
+  day: string;
+  accounts: string;
+  uses: string;
 }
