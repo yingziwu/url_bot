@@ -60,6 +60,14 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://t.ly/C9Jn"),
     "https://greasyfork.org/zh-CN/scripts/406070-%E5%B0%8F%E8%AF%B4%E4%B8%8B%E8%BD%BD%E5%99%A8",
   );
+  assertEquals(
+    await clean("https://urlzs.com/DDYin"),
+    "https://example.com/",
+  );
+  assertEquals(
+    await clean("http://t-t.ink/0i5e_"),
+    "https://example.com/",
+  );
 
   assertEquals(
     await clean("https://t.co/KODJKyanrb"),
@@ -83,7 +91,11 @@ Deno.test("Remove Track Param", async () => {
   );
   assertEquals(
     await clean("http://fumacrom.com/3ctzC"),
-    "https://cxybb.com/article/qq_43342406/84451337"
+    "https://cxybb.com/article/qq_43342406/84451337",
+  );
+  assertEquals(
+    await clean("http://dw-z.ink/0i1eI"),
+    "https://example.com/",
   );
 
   console.info("开始测试黑名单……");

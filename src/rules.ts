@@ -483,24 +483,16 @@ async function AdFly(url: string) {
 export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["we.tl", follow],
   ["b23.tv", follow],
-  // reddit
-  ["redd.it", follow],
-  ["v.redd.it", follow],
-
+  ["t.ly", follow],
   ["youtu.be", follow],
   ["bit.ly", follow],
   ["is.gd", follow],
   ["dwz.cn", follow],
   ["sourl.cn", follow],
+  ["url.cn", follow],
   ["w.url.cn", follow],
   ["tinyurl.com", follow],
   ["goo.gl", follow],
-  // suolink.cn
-  ["mtw.so", follow],
-  ["u6v.cn", follow],
-  ["m6z.cn", follow],
-
-  ["t.ly", follow],
   [
     "t.co",
     (url) => {
@@ -560,8 +552,36 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
       }
     },
   ],
+  ["urlzs.com", follow],
+  // reddit
+  ["redd.it", follow],
+  ["v.redd.it", follow],
+  // suolink.cn
+  ["mtw.so", follow],
+  ["u6v.cn", follow],
+  ["m6z.cn", follow],
+  // adf.ly
   [
     "fumacrom.com",
     AdFly,
   ],
+  // 6du.in
+  ["t-t.ink", follow],
+  ["dw-z.ink", async (url) => {
+    const resp = await get(url);
+    if (new URL(resp.url).hostname === "dw-z.ink") {
+      const doc = parse(await resp.text());
+      const out = doc?.querySelector(
+        "div.main-hint > div.main-hint-text > span > a",
+      )?.getAttribute("href")?.trim();
+      if (out) {
+        return out;
+      } else {
+        throw new Error(`展开短网址时出错：${url}`);
+      }
+    } else {
+      await resp.body?.cancel();
+      return resp.url;
+    }
+  }],
 ]);
