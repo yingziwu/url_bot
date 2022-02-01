@@ -307,4 +307,21 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   // tyson.cool
   ["ddl.ink", follow],
   ["tsd.ink", follow],
+  // www.shrunken.com
+  ["www.shrunken.com", follow],
+  ["p.asia", follow],
+  ["g.asia", follow],
+  ["3.ly", follow],
+  ["0.gp", follow],
+  ["2.ly", follow],
+  ["4.gp", follow],
+  ["4.ly", follow],
+  ["6.ly", follow],
+  ["7.ly", follow],
+  ["8.ly", follow],
+  ["9.ly", follow],
+  ["2.gp", follow],
+  ["6.gp", follow],
+  ["5.gp", follow],
+  ["ur3.us", follow],
 ]);

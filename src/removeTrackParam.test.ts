@@ -77,6 +77,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://tsd.ink/tsywd"),
     "https://weidian.com/item.html?itemID=4296908918&spider_token=e9dd",
   );
+  assertEquals(
+    await clean("https://3.ly/aeHld"),
+    "https://mastodon.social/@Mastodon/107718287079955422",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
