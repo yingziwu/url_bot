@@ -89,6 +89,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("http://apple.co/WeCanDoHardThings"),
     "https://podcasts.apple.com/us/podcast/we-can-do-hard-things-with-glennon-doyle/id1564530722",
   );
+  assertEquals(
+    await clean("https://suo.yt/dY4FN5p"),
+    "https://www.mediafire.com/file/0kurb7mt4v8tgg2/%25E6%2596%25B0%25E5%2586%25A0%25E7%2597%2585%25E6%25AF%2592%25E7%25A0%2594%25E7%25A9%25B6%25E6%258A%25A5%25E5%2591%258A.pdf/file",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
