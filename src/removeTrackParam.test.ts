@@ -85,6 +85,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://forms.gle/wU11nYMy73EiDFk76"),
     "https://docs.google.com/forms/d/e/1FAIpQLSeEK07O4FO6zyztfHN4mTkZ8yNV8NRBaPIOuZnZlqKUhqQVZg/viewform?usp=send_form",
   );
+  assertEquals(
+    await clean("http://apple.co/WeCanDoHardThings"),
+    "https://podcasts.apple.com/us/podcast/we-can-do-hard-things-with-glennon-doyle/id1564530722",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
@@ -138,6 +142,18 @@ Deno.test("Remove Track Param", async () => {
       "https://www.infoq.com/articles/kotlin-ten-years-qa/?topicPageSponsorship=9df7746f-b196-415b-964e-bc8483319fd9&itm_source=articles_about_development&itm_medium=link&itm_campaign=development",
     ),
     "https://www.infoq.com/articles/kotlin-ten-years-qa/",
+  );
+  assertEquals(
+    await clean(
+      "https://open.spotify.com/track/7HRrG09z9d5qCAbT3R3qJ9?si=lcTEeS6MQfGJEfXA7G3Ehg",
+    ),
+    "https://open.spotify.com/track/7HRrG09z9d5qCAbT3R3qJ9",
+  );
+  assertEquals(
+    await clean(
+      "https://podcasts.apple.com/us/podcast/%E5%AF%BB%E8%B8%AA%E8%A7%85%E5%BD%B1-her-unfolding-stories/id1600854959?i=1000549119908",
+    ),
+    "https://podcasts.apple.com/us/podcast/%E5%AF%BB%E8%B8%AA%E8%A7%85%E5%BD%B1-her-unfolding-stories/id1600854959",
   );
 
   console.info("开始测试白名单……");
