@@ -110,8 +110,9 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "from_source",
     "refer_from",
     "bbid",
-    "ts"
+    "ts",
   ],
+  "v.youku.com": ["sharefrom", "sharekey"],
   "douban.com": ["_i", "_dtcc"],
   "share.api.weibo.cn": ["weibo_id"],
   "weibo.com": ["pagetype", "from"],
