@@ -109,6 +109,8 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "unique_k",
     "from_source",
     "refer_from",
+    "bbid",
+    "ts"
   ],
   "douban.com": ["_i", "_dtcc"],
   "share.api.weibo.cn": ["weibo_id"],
