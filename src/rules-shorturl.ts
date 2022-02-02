@@ -36,14 +36,41 @@ async function get(
   }
 }
 
-async function follow(url: string, getFunc = get) {
+async function followA(url: string, getFunc = get) {
+  const resp = await getFunc(url);
+  await resp.body?.cancel();
+  return resp.url;
+}
+
+async function followM(url: string) {
+  while (true) {
+    try {
+      const resp = await get(url, undefined, "manual");
+      if (resp.status >= 300 && resp.status < 400) {
+        await resp.body?.cancel();
+        const location = resp.headers.get("location");
+        if (location) {
+          url = location;
+        } else {
+          return url;
+        }
+      } else {
+        await resp.body?.cancel();
+        return resp.url;
+      }
+    } catch (error) {
+      console.error(error);
+      return url;
+    }
+  }
+}
+
+async function follow(url: string) {
   try {
-    const resp = await getFunc(url);
-    await resp.body?.cancel();
-    return resp.url;
+    const result = await followA(url);
+    return result;
   } catch (error) {
-    console.error(error);
-    return url;
+    return await followM(url);
   }
 }
 
@@ -230,7 +257,7 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
     "t.co",
     (url) => {
       const nGet = (url: string) => get(url, {});
-      return follow(url, nGet);
+      return followA(url, nGet);
     },
   ],
   [

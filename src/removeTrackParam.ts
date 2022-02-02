@@ -136,14 +136,16 @@ export async function clean(url: string) {
   return removeTrackParm(url);
 }
 
+async function cli() {
+  const { parse } = await import("https://deno.land/std/flags/mod.ts");
+  const args = parse(Deno.args);
+  args._.forEach(async (url) => {
+    console.info(
+      `原URL：${url}\n处理后URL：${await clean(url as string)}\n\n`,
+    );
+  });
+}
+
 if (import.meta.main) {
-  (async () => {
-    const { parse } = await import("https://deno.land/std/flags/mod.ts");
-    const args = parse(Deno.args);
-    args._.forEach(async (url) => {
-      console.info(
-        `原URL：${url}\n处理后URL：${await clean(url as string)}\n\n`,
-      );
-    });
-  })();
+  cli();
 }
