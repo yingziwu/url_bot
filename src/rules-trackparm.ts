@@ -254,6 +254,11 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
   "www.dw.com": ["maca"],
   "open.spotify.com": ["si"],
   "podcasts.apple.com": ["i", "mt", "itscg", "itsct"],
+  "zhihu.com": [
+    { pathname: "/search", search: "search_source" },
+    { pathname: "/search", search: "hybrid_search_source" },
+    { pathname: "/search", search: "hybrid_search_extra" },
+  ],
 };
 const whitelist: Record<string, (string | RegExp | rule)[] | true> = {
   "ramtrucks.com": [{ pathname: "/mediaserver/", search: true }],
