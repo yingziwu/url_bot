@@ -157,8 +157,8 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
   "www.baidu.com": ["rsv_pq", "rsv_t"],
   "nytimes.com": ["impression_id"],
   "www.youtube.com": ["feature"],
-  "bbc.com": ["ocid", "at_medium", "at_campaign"],
-  "bbc.co.uk": ["ocid", "at_medium", "at_campaign"],
+  "bbc.com": ["ocid", "at_medium", "at_campaign", /^at_custom/],
+  "bbc.co.uk": ["ocid", "at_medium", "at_campaign", /^at_custom/],
   "microsoft.com": [
     "tduid",
     "irclickid",
