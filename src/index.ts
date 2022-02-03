@@ -275,16 +275,21 @@ function openStream(id: string, acct: string) {
       }
       const parentStatus = await getStatus(in_reply_to_id) as Status;
       if (
-        parentStatus.mentions.map((m) => m.acct).includes(account.acct) &&
-        parentStatus.in_reply_to_id === null
+        parentStatus.mentions.map((m) => m.acct).includes(account.acct)
       ) {
-        return true;
-      } else {
-        postNotification(statusId, account.acct).catch((error) =>
-          console.error(error)
-        );
-        return false;
+        if (parentStatus.in_reply_to_id === null) {
+          return true;
+        } else {
+          const ppStatus = await getStatus(parentStatus.in_reply_to_id);
+          if (ppStatus === null) {
+            return true;
+          }
+        }
       }
+      postNotification(statusId, account.acct).catch((error) =>
+        console.error(error)
+      );
+      return false;
 
       function isIncludeDelete(_content: string) {
         const elem = parse(_content);
