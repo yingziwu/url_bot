@@ -252,7 +252,7 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
   ],
   "m.sohu.com": ["pvid"],
   "www.dw.com": ["maca"],
-  "open.spotify.com": ["si"],
+  "open.spotify.com": ["si", "context"],
   "podcasts.apple.com": ["i", "mt", "itscg", "itsct"],
   "zhihu.com": [
     { pathname: "/search", search: "search_source" },
