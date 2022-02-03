@@ -8,7 +8,7 @@ User=urlbot
 Restart=on-failure
 RestartSec=5s
 WorkingDirectory=/opt/url_bot/
-ExecStart=/usr/bin/deno run --watch --allow-net --allow-env --allow-read=./ --unstable src/index.ts
+ExecStart=/usr/bin/deno run --allow-net --allow-env --allow-read=./ --unstable src/index.ts
 
 [Install]
 WantedBy=default.target
