@@ -217,8 +217,7 @@ function openStream(id: string, acct: string) {
           texts.join("\n\n") +
           "\n\n" +
           "当您删除含有追踪参数的链接或短链接的嘟文后，可使用 delete 指令删除本条回复嘟文。\n更多信息可参见：https://bgme.me/@url/107733097656542346" +
-          "\n\n";
-        _mentions.map((m) => `@${m}`).join(" ");
+          "\n\n" + _mentions.map((m) => `@${m}`).join(" ");
         return text;
       }
     }
