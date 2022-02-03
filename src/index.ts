@@ -102,7 +102,7 @@ function openStream(id: string, acct: string) {
           } else if (await deleteCommandTest(data.status)) {
             handleDelete(data.status);
           } else {
-            handleStatus(data.status);
+            handleMentionStatus(data.status);
           }
         }
       }
@@ -129,24 +129,22 @@ function openStream(id: string, acct: string) {
         return;
       }
       const _mentions = getMentions();
-      const urlList = getUrlList();
-      if (urlList.length === 0) {
+      const urlItems = await getUrlItems();
+      if (urlItems.length === 0) {
         return;
       }
       if (await descendantsCheck()) {
         return;
       }
-      const statusText = await getStatusText();
-      if (statusText) {
-        postStatus(statusText, {
-          in_reply_to_id: statusId,
-          language: language ?? undefined,
-          visibility: visibility === "direct" ? "direct" : "unlisted",
-        }).catch((error) => {
-          console.error("发送嘟文失败！");
-          console.error(error);
-        });
-      }
+      const statusText = getStatusText();
+      return postStatus(statusText, {
+        in_reply_to_id: statusId,
+        language: language ?? undefined,
+        visibility: visibility === "direct" ? "direct" : "unlisted",
+      }).catch((error) => {
+        console.error("发送嘟文失败！");
+        console.error(error);
+      });
 
       /** 重复发嘟检测，防止重复发嘟 */
       function duplicateCheck() {
@@ -168,7 +166,7 @@ function openStream(id: string, acct: string) {
         return Array.from(ms);
       }
       /** 获取 URL 列表 */
-      function getUrlList() {
+      async function getUrlItems() {
         const elem = parse(content);
         const aList = elem.querySelectorAll(
           'a[rel="nofollow noopener noreferrer"]',
@@ -179,7 +177,17 @@ function openStream(id: string, acct: string) {
         const ul = Array.from(aList)
           .map((a) => (a as Element).getAttribute("href")?.trim())
           .filter((u) => u !== undefined) as string[];
-        return Array.from(new Set(ul));
+
+        const urlList = Array.from(new Set(ul));
+        const urlItems = await Promise.all(
+          urlList.map(async (u) => ({
+            before: u,
+            after: await clean(u),
+          })),
+        );
+        return urlItems.filter((item) =>
+          compareUrl(item.before, item.after) === false
+        );
       }
       /** 转发贴检测
        * 发贴时间差大于2分钟，检查子嘟文，以防重复发嘟
@@ -198,22 +206,12 @@ function openStream(id: string, acct: string) {
         return false;
       }
       /** 获取嘟文文本 */
-      async function getStatusText() {
-        const urlItems = await Promise.all(
-          urlList.map(async (u) => ({
-            before: u,
-            after: await clean(u),
-          })),
-        );
+      function getStatusText() {
         const texts = urlItems
-          .filter((item) => compareUrl(item.before, item.after) === false)
           .map((item) => {
             console.info(item);
             return `原链接：${item.before}\n净化后链接：${item.after}`;
           });
-        if (texts.length === 0) {
-          return null;
-        }
         const text = "发现含有追踪参数的链接或短链接，详情如下：\n\n" +
           texts.join("\n\n") +
           "\n\n" +
@@ -326,6 +324,22 @@ function openStream(id: string, acct: string) {
         }, 180);
       } catch (error) {
         console.error(error);
+      }
+    }
+
+    async function handleMentionStatus(data: Status) {
+      const s = await handleStatus(data);
+      if (!s) {
+        const text =
+          `已收到您的嘟文，但未在您的嘟文中发现含有追踪参数的链接或短链接。\n这可能由于过滤规则不完善造成。\n您可以联系 https://bgme.me/@bgme 寻求进一步帮助。\n\n@${data.account.acct}`;
+        postStatus(text, {
+          in_reply_to_id: data.id,
+          visibility: "direct",
+          language: data.language ?? undefined,
+        }).catch((error) => {
+          console.error("发送嘟文失败！");
+          console.error(error);
+        });
       }
     }
   });
