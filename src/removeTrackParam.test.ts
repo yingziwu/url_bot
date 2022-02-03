@@ -97,6 +97,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://bit.ly/35KookQ"),
     "https://404.example.com/",
   );
+  assertEquals(
+    await clean("https://go.microsoft.com/fwlink/?linkid=2061461"),
+    "https://support.microsoft.com/windows/core-isolation-e30ed737-17d8-42f3-a2a9-87521df09b78",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
