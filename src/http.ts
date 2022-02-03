@@ -11,6 +11,41 @@ const baseHeaders = {
   Accept: "application/json, text/plain, */*",
 };
 
+async function request(
+  url: string,
+  method: string,
+  body?: BodyInit | null,
+  headers?: Record<string, string>,
+  timeout: number = 1000 * 10,
+) {
+  const controller = new AbortController();
+  const signal = controller.signal;
+  const tid = setTimeout(() => {
+    controller.abort("Timeout!");
+  }, 10000);
+  try {
+    const response = await fetch(
+      url,
+      {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          ...baseHeaders,
+          ...headers,
+        },
+        body,
+        keepalive: true,
+        signal,
+      },
+    );
+    clearTimeout(tid);
+    return response;
+  } catch (error) {
+    clearTimeout(tid);
+    throw error;
+  }
+}
+
 export function get(input: string) {
   let url;
   if (input.startsWith("https://")) {
@@ -19,16 +54,12 @@ export function get(input: string) {
     url = baseUrl + input;
   }
   console.debug(`[GET] ${url}`);
-  return fetch(url, {
-    headers: {
-      ...baseHeaders,
-    },
-  });
+  return request(url, "GET");
 }
 
 export function post(
   input: string,
-  body?: object,
+  body?: Record<string, unknown>,
   headers?: Record<string, string>,
 ) {
   let url;
@@ -37,16 +68,28 @@ export function post(
   } else {
     url = baseUrl + input;
   }
+  const logObj = ["[POST]", url];
+  if (body) {
+    logObj.push(JSON.stringify(body));
+  }
+  if (headers) {
+    logObj.push(JSON.stringify(headers));
+  }
   console.debug(
-    `[POST] ${url} ${JSON.stringify(body)} ${JSON.stringify(headers)}`,
+    logObj.join(" "),
   );
-  return fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...baseHeaders,
-      ...headers,
-    },
-    body: body ? JSON.stringify(body) : null,
-  });
+  return request(url, "POST", body ? JSON.stringify(body) : null, headers);
+}
+
+export function Delete(
+  input: string,
+) {
+  let url;
+  if (input.startsWith("https://")) {
+    url = input;
+  } else {
+    url = baseUrl + input;
+  }
+  console.debug(`[DELETE] ${url}`);
+  return request(url, "DELETE");
 }
