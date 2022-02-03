@@ -313,7 +313,7 @@ function openStream(id: string, acct: string) {
       try {
         await deleteStatus(in_reply_to_id as string);
         const text =
-          `接收到删除指令，执行删除操作成功！\n\n本条通知嘟文将在3分钟后自动删除，如有更多疑问请联系 https://bgme.me/@bgme \n\n@${account.acct}`;
+          `接收到删除指令，执行删除操作成功！\n您现在可以移除删除指令嘟文了。\n\n本条通知嘟文将在3分钟后自动删除，如有更多疑问请联系 https://bgme.me/@bgme \n\n@${account.acct}`;
         await postStatusWithExpire(text, {
           in_reply_to_id: statusId,
           visibility: "direct",
