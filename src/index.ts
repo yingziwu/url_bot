@@ -1,3 +1,4 @@
+import { deleteTask, deteleTaskList } from "./deteleTaskList.ts";
 import { AccessToken, InstanceUrl } from "./http.ts";
 import { compareUrl, getTexts, parse, sleep } from "./lib.ts";
 import { clean } from "./removeTrackParam.ts";
@@ -350,6 +351,28 @@ function openStream(id: string, acct: string) {
   }
 }
 
+/** 清理未完成的删除任务 */
+function clearDeleteTasks() {
+  const tasks = deteleTaskList.getAll();
+  console.info(`[clearDeleteTasks] Task list length: ${tasks.length}`);
+  tasks.forEach((task) => handler(task));
+
+  function handler(task: deleteTask) {
+    let diff = Date.now() - task.expired;
+    if (diff < 0) {
+      diff = 0;
+    }
+    setTimeout(async () => {
+      try {
+        await deleteStatus(task.id);
+        deteleTaskList.delete(task.id);
+      } catch (error) {
+        console.error(error);
+      }
+    }, diff);
+  }
+}
+
 let socketExist = false;
 async function main() {
   const { id, acct } = await verifyToken();
@@ -357,6 +380,10 @@ async function main() {
   setInterval(() => {
     syncFollowRelations(id);
   }, 1000 * 3600 * 3);
+  clearDeleteTasks();
+  setInterval(() => {
+    clearDeleteTasks();
+  }, 1000 * 3600);
   openStream(id, acct);
 }
 

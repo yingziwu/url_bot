@@ -1,4 +1,5 @@
 ///  <reference types="./mastodon.d.ts" />
+import { deteleTaskList } from "./deteleTaskList.ts";
 import { Delete, get, post } from "./http.ts";
 import { sha1sum } from "./lib.ts";
 
@@ -172,8 +173,17 @@ export async function postStatusWithExpire(
     throw new Error("不支持发送 schedule status");
   }
   const ps = await postStatus(status, options) as Status;
-  setTimeout(() => {
-    deleteStatus(ps.id).catch((error) => console.error(error));
+  deteleTaskList.set(ps.id, {
+    id: ps.id,
+    expired: Date.now() + 1000 * seconds,
+  });
+  setTimeout(async () => {
+    try {
+      await deleteStatus(ps.id);
+      deteleTaskList.delete(ps.id);
+    } catch (error) {
+      console.error(error);
+    }
   }, 1000 * seconds);
   return ps;
 }
