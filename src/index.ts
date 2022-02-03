@@ -297,7 +297,7 @@ function openStream(id: string, acct: string) {
         in_reply_to_account_acct: string,
       ) {
         const text =
-          `接收到删除指令，但未执行删除操作。\n\n以下删除指令执行条件至少有一条未满足：\n- 删除指令嘟文无父嘟文或父嘟文非本BOT发送\n- 需删除嘟文提及（@）了您\n- 需删除嘟文的父嘟文已被删除\n\n本条通知嘟文将在3分钟后自动删除，如有更多疑问请联系 https://bgme.me/@bgme \n\n@${in_reply_to_account_acct}`;
+          `接收到删除指令，但未执行删除操作。\n\n以下删除指令执行条件至少有一项未满足：\n- 删除指令嘟文父嘟文必须为本BOT发送\n- 需删除嘟文提及（@）了您\n- 需删除嘟文的父嘟文已被删除\n\n本条通知嘟文将在3分钟后自动删除，如有更多疑问请联系 https://bgme.me/@bgme \n\n@${in_reply_to_account_acct}`;
         return postStatusWithExpire(text, {
           in_reply_to_id,
           visibility: "direct",
