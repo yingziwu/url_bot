@@ -47,15 +47,17 @@ async function syncFollowRelations(id: string) {
   const follows = await getFollows(id);
   const followings = await getFollowings(id);
 
-  const syncUnfollowStatus = await syncUnfollow(follows, followings).catch((
-    err,
-  ) => console.error(err));
-  console.info(
-    "syncUnfollow",
-    follows.length,
-    followings.length,
-    syncUnfollowStatus,
-  );
+  try {
+    const syncUnfollowStatus = await syncUnfollow(follows, followings);
+    console.info(
+      "syncUnfollow",
+      follows.length,
+      followings.length,
+      syncUnfollowStatus,
+    );
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 /** 打开 WebSocket */
@@ -213,8 +215,10 @@ function openStream(id: string, acct: string) {
         }
         const text = "发现含有追踪参数的链接或短链接，详情如下：\n\n" +
           texts.join("\n\n") +
-          "\n\n" + "当您删除含有追踪参数的链接或短链接的嘟文后，可使用 delete 指令删除本条回复嘟文。\n更多信息可参见：https://bgme.me/@url/107733097656542346" + '\n\n'
-          _mentions.map((m) => `@${m}`).join(" ");
+          "\n\n" +
+          "当您删除含有追踪参数的链接或短链接的嘟文后，可使用 delete 指令删除本条回复嘟文。\n更多信息可参见：https://bgme.me/@url/107733097656542346" +
+          "\n\n";
+        _mentions.map((m) => `@${m}`).join(" ");
         return text;
       }
     }
