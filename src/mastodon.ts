@@ -190,11 +190,7 @@ export async function postStatusWithExpire(
     throw new Error("不支持发送 schedule status");
   }
   const ps = await postStatus(status, options) as Status;
-  deteleTaskList.set(ps.id, {
-    id: ps.id,
-    expired: Date.now() + 1000 * seconds,
-  });
-  setTimeout(async () => {
+  const timeoutID = setTimeout(async () => {
     try {
       await deleteStatus(ps.id);
       deteleTaskList.delete(ps.id);
@@ -202,6 +198,11 @@ export async function postStatusWithExpire(
       console.error(error);
     }
   }, 1000 * seconds);
+  deteleTaskList.set(ps.id, {
+    id: ps.id,
+    expired: Date.now() + 1000 * seconds,
+    timeoutID,
+  });
   return ps;
 }
 

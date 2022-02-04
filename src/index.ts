@@ -452,7 +452,9 @@ function clearDeleteTasks() {
     if (diff < 0) {
       diff = 0;
     }
-    setTimeout(async () => {
+    clearTimeout(task.timeoutID);
+    // noinspection UnnecessaryLocalVariableJS
+    const timeoutID = setTimeout(async () => {
       try {
         await deleteStatus(task.id);
         deteleTaskList.delete(task.id);
@@ -460,6 +462,8 @@ function clearDeleteTasks() {
         console.error(error);
       }
     }, diff);
+    task.timeoutID = timeoutID;
+    deteleTaskList.set(task.id, task);
   }
 }
 
@@ -469,14 +473,29 @@ async function deleteOrphanStatus(id: string, timeLimitSeconds?: number) {
   const orphanList = statusList.filter((s) =>
     s.content.includes("发现含有追踪参数的链接或短链接，详情如下：") && s.in_reply_to_id === null
   );
-  const tasks = orphanList.map((s) => s.id).map((sid) => deleteStatus(sid));
-  return await Promise.all(tasks);
-}
+  const taskIds = orphanList.map((s) => s.id);
+  const timeCost = (taskIds.length / 60) * 3600 * 1000;
+  console.info(
+    `[deleteOrphanStatus] Delete Task list length: ${taskIds.length}, expect time cost: ${timeCost} ms`,
+  );
+  taskIds.forEach((tid) => handler(tid));
 
-// noinspection JSUnusedLocalSymbols
-async function doDeleteOrphanStatusTask() {
-  const { id } = await verifyToken();
-  await deleteOrphanStatus(id);
+  function handler(taskId: string) {
+    const delay = Math.floor(timeCost * 2 * Math.random());
+    const timeoutID = setTimeout(async () => {
+      try {
+        await deleteStatus(taskId);
+        deteleTaskList.delete(taskId);
+      } catch (error) {
+        console.error(error);
+      }
+    }, delay);
+    deteleTaskList.set(taskId, {
+      id: taskId,
+      expired: Date.now() + delay,
+      timeoutID,
+    });
+  }
 }
 
 let socketExist = false;
@@ -493,6 +512,10 @@ async function main() {
     clearDeleteTasks();
   }, 1000 * 3600);
   openStream(id, acct);
+  deleteOrphanStatus(id);
+  setInterval(() => {
+    deleteOrphanStatus(id);
+  }, 1000 * 3600 * 8);
 }
 
 if (import.meta.main) {

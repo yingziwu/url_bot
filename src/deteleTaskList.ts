@@ -1,6 +1,7 @@
 export interface deleteTask {
   id: string;
   expired: number;
+  timeoutID: number;
 }
 
 const keyName = "1e55ee9367e20929b61c557638f23ad8";
