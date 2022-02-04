@@ -334,12 +334,12 @@ function openStream(id: string, acct: string) {
             const s = await handleStatus(data);
             if (!s) {
                 const text =
-                    `已收到您的嘟文，但未在您的嘟文中发现含有追踪参数的链接或短链接。\n这可能由于过滤规则不完善造成。\n您可以联系 https://bgme.me/@bgme 寻求进一步帮助。\n\n@${data.account.acct}`;
-                postStatus(text, {
+                    `已收到您的嘟文，但未在您的嘟文中发现指令、含有追踪参数的链接或短链接。\n如查您尝试使用指令，请确保单词前已包含 ! 。\n如您尝试过滤链接，这可能由于过滤规则不完善造成。\n您可以联系 https://bgme.me/@bgme 寻求进一步帮助。\n\n本条通知嘟文将在3分钟后自动删除。\n\n@${data.account.acct}`;
+                postStatusWithExpire(text, {
                     in_reply_to_id: data.id,
                     visibility: "direct",
                     language: data.language ?? undefined,
-                }).catch((error) => {
+                }, 180).catch((error) => {
                     console.error("发送嘟文失败！");
                     console.error(error);
                 });
