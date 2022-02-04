@@ -22,6 +22,7 @@ import { Element } from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
 
 // noinspection JSUnusedLocalSymbols
 /** 自动回关
+ *
  * 回关所有关注自己的用户
  */
 async function _syncFollow(follows: Account[], followings: Account[]) {
@@ -35,6 +36,7 @@ async function _syncFollow(follows: Account[], followings: Account[]) {
 }
 
 /** 自动取关
+ *
  * 自动取关不再关注自己的用户
  */
 async function syncUnfollow(follows: Account[], followings: Account[]) {
@@ -160,10 +162,12 @@ function openStream(id: string, acct: string) {
       });
 
       /** 是否为普通用户
+       *
        * 特殊用户检测
        * - 发出的嘟文的用户为正在关注以及关注者
        * - 提及了自己的嘟文的用户
-       * 符合条件返回 false
+       *
+       * 符合任一条件返回 false
        */
       function isNormalUser() {
         if (
@@ -179,6 +183,7 @@ function openStream(id: string, acct: string) {
       }
 
       /** 可见度检测
+       *
        * 通过条件：
        * - 属性为 public 的嘟文
        * - 正在关注用户发出的嘟文
@@ -252,6 +257,7 @@ function openStream(id: string, acct: string) {
       }
 
       /** 转发贴检测
+       *
        * 发贴时间差大于2分钟，检查子嘟文，以防重复发嘟
        */
       async function descendantsCheck() {
@@ -300,6 +306,7 @@ function openStream(id: string, acct: string) {
 
     function handleFollow(data: Notification) {
       console.info(`[streaming][notification] follow ${data.account.id}`);
+      followsGlobal.push(data.account);
       follow(data.account.id).catch((err) => console.error(err));
     }
 
@@ -514,7 +521,7 @@ async function main() {
   await syncFollowRelations(id);
   setInterval(() => {
     syncFollowRelations(id);
-  }, 1000 * 3600 * 3);
+  }, 1000 * 3600);
   await clearDeleteTasks();
   setInterval(() => {
     clearDeleteTasks();
