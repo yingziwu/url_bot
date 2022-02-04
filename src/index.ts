@@ -184,7 +184,13 @@ function openStream(id: string, acct: string) {
                     // 正在关注用户发出的嘟文
                     return false
                 } else {
-                    return account.note.includes("#<span>nobot</span>")
+                    if (followingsGlobal.map((f) => f.acct).includes(account.acct)) {
+                        // 正在关注用户发出的嘟文
+                        return false
+                    } else {
+                        // 是否包含 #nobot
+                        return account.note.includes("#<span>nobot</span>")
+                    }
                 }
             }
 
