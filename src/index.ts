@@ -130,7 +130,10 @@ function openStream(id: string, acct: string) {
                 visibility,
             } = data;
             if (visibilityCheck()) {
-                return
+                return;
+            }
+            if (nobotCheck()) {
+                return;
             }
             if (duplicateCheck()) {
                 return;
@@ -144,6 +147,7 @@ function openStream(id: string, acct: string) {
                 return;
             }
             const statusText = getStatusText();
+            followOnlyWarning()
             return postStatus(statusText, {
                 in_reply_to_id: statusId,
                 language: language ?? undefined,
@@ -171,6 +175,16 @@ function openStream(id: string, acct: string) {
                         // 提及了自己的嘟文
                         return !mentions.map((f) => f.acct).includes(acct);
                     }
+                }
+            }
+
+            /** #nobot 标签检测 */
+            function nobotCheck() {
+                if (followingsGlobal.map((f) => f.acct).includes(account.acct)) {
+                    // 正在关注用户发出的嘟文
+                    return false
+                } else {
+                    return account.note.includes("#<span>nobot</span>")
                 }
             }
 
@@ -246,6 +260,20 @@ function openStream(id: string, acct: string) {
                     "\n\n" +
                     "当您删除含有追踪参数的链接或短链接的嘟文后，可使用 delete 指令删除本条回复嘟文。\n更多信息可参见：https://bgme.me/@url/107733097656542346" +
                     "\n\n" + _mentions.map((m) => `@${m}`).join(" ");
+            }
+
+            function followOnlyWarning() {
+                if (visibility === "private") {
+                    const warningText = `注意到您这条嘟文的可见度为 Followers-only，出于让查看当前嘟串的所有嘟友均可见，以避免其点击追踪链接的考量，回复嘟文的可见度为 unlisted。\n这可能泄露您隐私信息，敬请特别注意。\n您可以通过 delete 指令删除相应回复嘟文，具体可参见： https://bgme.me/@url/107733097656542346 \n\n本条通知嘟文将在10分钟后自动删除。\n@${account.acct}`
+                    postStatusWithExpire(warningText, {
+                        in_reply_to_id: statusId,
+                        language: language ?? undefined,
+                        visibility: "direct"
+                    }, 600).catch((error) => {
+                        console.error("发送嘟文失败！");
+                        console.error(error);
+                    });
+                }
             }
         }
 
