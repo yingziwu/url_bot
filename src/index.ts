@@ -168,8 +168,11 @@ function openStream(id: string, acct: string) {
           // 属性为 public 的嘟文
           return false;
         } else {
-          if (followingsGlobal.map((f) => f.acct).includes(account.acct)) {
-            // 正在关注用户发出的嘟文
+          if (
+            followingsGlobal.map((f) => f.acct).includes(account.acct) ||
+            followsGlobal.map((f) => f.acct).includes(account.acct)
+          ) {
+            // 正在关注以及关注者发出的嘟文
             return false;
           } else {
             // 提及了自己的嘟文
@@ -180,16 +183,20 @@ function openStream(id: string, acct: string) {
 
       /** #nobot 标签检测 */
       function nobotCheck() {
-        if (followingsGlobal.map((f) => f.acct).includes(account.acct)) {
-          // 正在关注用户发出的嘟文
+        if (
+          followingsGlobal.map((f) => f.acct).includes(account.acct) ||
+          followsGlobal.map((f) => f.acct).includes(account.acct)
+        ) {
+          // 正在关注以及关注者发出的嘟文
           return false;
         } else {
-          if (followingsGlobal.map((f) => f.acct).includes(account.acct)) {
-            // 正在关注用户发出的嘟文
+          if (mentions.map((f) => f.acct).includes(acct)) {
+            // 提及了自己的嘟文
             return false;
           } else {
             // 是否包含 #nobot
-            return account.note.includes("#<span>nobot</span>");
+            return account.note.toLowerCase().includes("#<span>nobot</span>") ||
+              account.note.toLowerCase().includes("#nobot");
           }
         }
       }
