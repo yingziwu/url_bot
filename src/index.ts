@@ -6,6 +6,7 @@ import { clean } from "./removeTrackParam.ts";
 import {
   deleteStatus,
   follow,
+  getAccoutStatus,
   getFollowings,
   getFollows,
   getStatus,
@@ -460,6 +461,22 @@ function clearDeleteTasks() {
       }
     }, diff);
   }
+}
+
+/** 清理失去父嘟文的回复嘟文 */
+async function deleteOrphanStatus(id: string, timeLimitSeconds?: number) {
+  const statusList = await getAccoutStatus(id, false, timeLimitSeconds);
+  const orphanList = statusList.filter((s) =>
+    s.content.includes("发现含有追踪参数的链接或短链接，详情如下：") && s.in_reply_to_id === null
+  );
+  const tasks = orphanList.map((s) => s.id).map((sid) => deleteStatus(sid));
+  return await Promise.all(tasks);
+}
+
+// noinspection JSUnusedLocalSymbols
+async function doDeleteOrphanStatusTask() {
+  const { id } = await verifyToken();
+  await deleteOrphanStatus(id);
 }
 
 let socketExist = false;

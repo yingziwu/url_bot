@@ -14,7 +14,15 @@ export async function verifyToken(): Promise<Account> {
   }
 }
 
-async function getList<T>(url: string): Promise<T[]> {
+interface link {
+  type: "next" | "prev";
+  url: string;
+}
+
+async function getList<T>(
+  url: string,
+  breakTest?: (list: T[], next: link) => boolean,
+): Promise<T[]> {
   const list: T[] = [];
   while (true) {
     const resp = await get(url);
@@ -25,11 +33,6 @@ async function getList<T>(url: string): Promise<T[]> {
       throw new Error(JSON.stringify(json));
     }
     const _link = resp.headers.get("link");
-
-    interface link {
-      type: "next" | "prev";
-      url: string;
-    }
 
     const links = _link
       ?.split(",")
@@ -45,6 +48,12 @@ async function getList<T>(url: string): Promise<T[]> {
       }) ?? [];
     const next = links.filter((item) => item.type === "next")[0];
     if (next) {
+      if (typeof breakTest === "function") {
+        if (breakTest(list, next)) {
+          console.info("[getList] break");
+          break;
+        }
+      }
       url = next.url;
     } else {
       break;
@@ -194,4 +203,28 @@ export async function postStatusWithExpire(
     }
   }, 1000 * seconds);
   return ps;
+}
+
+/** 获取特定帐户的嘟文数据 */
+export function getAccoutStatus(
+  accoutId: string,
+  exclude_replies: boolean,
+  timelimitSeconds?: number,
+) {
+  let limit = 0;
+  if (timelimitSeconds) {
+    limit = Date.now() - (timelimitSeconds * 1000);
+  }
+  const breakTest = (list: Status[], _next: link) => {
+    const matchs = list.map((s) => s.created_at).filter((created_at) => {
+      return new Date(created_at).getTime() - limit > 0;
+    });
+    return matchs.length === 0;
+  };
+  return getList<Status>(
+    `/api/v1/accounts/${accoutId}/statuses${
+      exclude_replies ? "" : "?exclude_replies=false"
+    }`,
+    breakTest,
+  );
 }
