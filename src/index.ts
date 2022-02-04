@@ -1,3 +1,4 @@
+///  <reference types="./mastodon.d.ts" />
 import {deleteTask, deteleTaskList} from "./deteleTaskList.ts";
 import {AccessToken, InstanceUrl} from "./http.ts";
 import {compareUrl, getTexts, parse, sleep} from "./lib.ts";
@@ -48,6 +49,8 @@ async function syncUnfollow(follows: Account[], followings: Account[]) {
 async function syncFollowRelations(id: string) {
     const follows = await getFollows(id);
     const followings = await getFollowings(id);
+    followsGlobal = follows
+    followingsGlobal = followings
 
     try {
         const syncUnfollowStatus = await syncUnfollow(follows, followings);
@@ -126,6 +129,9 @@ function openStream(id: string, acct: string) {
                 created_at,
                 visibility,
             } = data;
+            if (visibilityCheck()) {
+                return
+            }
             if (duplicateCheck()) {
                 return;
             }
@@ -146,6 +152,27 @@ function openStream(id: string, acct: string) {
                 console.error("发送嘟文失败！");
                 console.error(error);
             });
+
+            /** 可见度检测
+             * 通过条件：
+             * - 属性为 public 的嘟文
+             * - 正在关注用户发出的嘟文
+             * - 提及了自己的嘟文
+             * */
+            function visibilityCheck() {
+                if (visibility === "public") {
+                    // 属性为 public 的嘟文
+                    return false
+                } else {
+                    if (followingsGlobal.map((f) => f.acct).includes(account.acct)) {
+                        // 正在关注用户发出的嘟文
+                        return false
+                    } else {
+                        // 提及了自己的嘟文
+                        return !mentions.map((f) => f.acct).includes(acct);
+                    }
+                }
+            }
 
             /** 重复发嘟检测，防止重复发嘟 */
             function duplicateCheck() {
@@ -396,14 +423,15 @@ function clearDeleteTasks() {
 }
 
 let socketExist = false;
+let followsGlobal: Account[], followingsGlobal: Account[]
 
 async function main() {
     const {id, acct} = await verifyToken();
-    syncFollowRelations(id);
+    await syncFollowRelations(id);
     setInterval(() => {
         syncFollowRelations(id);
     }, 1000 * 3600 * 3);
-    clearDeleteTasks();
+    await clearDeleteTasks();
     setInterval(() => {
         clearDeleteTasks();
     }, 1000 * 3600);
