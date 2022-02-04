@@ -456,7 +456,7 @@ function clearDeleteTasks() {
   tasks.forEach((task) => handler(task));
 
   function handler(task: deleteTask) {
-    let diff = Date.now() - task.expired;
+    let diff = task.expired - Date.now();
     if (diff < 0) {
       diff = 0;
     }
