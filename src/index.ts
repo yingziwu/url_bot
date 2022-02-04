@@ -3,6 +3,7 @@ import { deleteTask, deteleTaskList } from "./deteleTaskList.ts";
 import { AccessToken, InstanceUrl } from "./http.ts";
 import { compareUrl, getTexts, parse, sleep } from "./lib.ts";
 import { clean } from "./removeTrackParam.ts";
+import { test as federatedTimelineIgnoreTest } from "./rules-federatedTimelineIgnore.ts";
 import {
   deleteStatus,
   follow,
@@ -158,6 +159,25 @@ function openStream(id: string, acct: string) {
         console.error(error);
       });
 
+      /** 是否为普通用户
+       * 特殊用户检测
+       * - 发出的嘟文的用户为正在关注以及关注者
+       * - 提及了自己的嘟文的用户
+       * 符合条件返回 false
+       */
+      function isNormalUser() {
+        if (
+          followingsGlobal.map((f) => f.acct).includes(account.acct) ||
+          followsGlobal.map((f) => f.acct).includes(account.acct)
+        ) {
+          // 正在关注以及关注者发出的嘟文
+          return false;
+        } else {
+          // 提及了自己的嘟文
+          return !mentions.map((f) => f.acct).includes(acct);
+        }
+      }
+
       /** 可见度检测
        * 通过条件：
        * - 属性为 public 的嘟文
@@ -169,36 +189,18 @@ function openStream(id: string, acct: string) {
           // 属性为 public 的嘟文
           return false;
         } else {
-          if (
-            followingsGlobal.map((f) => f.acct).includes(account.acct) ||
-            followsGlobal.map((f) => f.acct).includes(account.acct)
-          ) {
-            // 正在关注以及关注者发出的嘟文
-            return false;
-          } else {
-            // 提及了自己的嘟文
-            return !mentions.map((f) => f.acct).includes(acct);
-          }
+          return isNormalUser();
         }
       }
 
       /** #nobot 标签检测 */
       function nobotCheck() {
-        if (
-          followingsGlobal.map((f) => f.acct).includes(account.acct) ||
-          followsGlobal.map((f) => f.acct).includes(account.acct)
-        ) {
-          // 正在关注以及关注者发出的嘟文
-          return false;
+        if (isNormalUser()) {
+          // 是否包含 #nobot
+          return account.note.toLowerCase().includes("#<span>nobot</span>") ||
+            account.note.toLowerCase().includes("#nobot");
         } else {
-          if (mentions.map((f) => f.acct).includes(acct)) {
-            // 提及了自己的嘟文
-            return false;
-          } else {
-            // 是否包含 #nobot
-            return account.note.toLowerCase().includes("#<span>nobot</span>") ||
-              account.note.toLowerCase().includes("#nobot");
-          }
+          return false;
         }
       }
 
@@ -233,7 +235,13 @@ function openStream(id: string, acct: string) {
           .map((a) => (a as Element).getAttribute("href")?.trim())
           .filter((u) => u !== undefined) as string[];
 
-        const urlList = Array.from(new Set(ul));
+        const urlList = Array.from(new Set(ul)).filter((u) => {
+          if (isNormalUser()) {
+            return !federatedTimelineIgnoreTest(u);
+          } else {
+            return true;
+          }
+        });
         const urlItems = await Promise.all(
           urlList.map(async (u) => ({
             before: u,
