@@ -1,3 +1,5 @@
+// noinspection HttpUrlsUsage
+
 import { clean } from "./removeTrackParam.ts";
 
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";

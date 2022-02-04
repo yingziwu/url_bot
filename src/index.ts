@@ -51,12 +51,12 @@ async function syncUnfollow(follows: Account[], followings: Account[]) {
 
 /** 同步关注关系 */
 async function syncFollowRelations(id: string) {
-  const follows = await getFollows(id);
-  const followings = await getFollowings(id);
-  followsGlobal = follows;
-  followingsGlobal = followings;
-
   try {
+    const follows = await getFollows(id);
+    const followings = await getFollowings(id);
+    followsGlobal = follows;
+    followingsGlobal = followings;
+
     const syncUnfollowStatus = await syncUnfollow(follows, followings);
     console.info(
       "syncUnfollow",
@@ -65,6 +65,7 @@ async function syncFollowRelations(id: string) {
       syncUnfollowStatus,
     );
   } catch (error) {
+    console.error("[error]syncFollowRelations");
     console.error(error);
   }
 }
@@ -75,9 +76,19 @@ function openStream(id: string, acct: string) {
   if (socketExist) {
     return;
   }
-  const socket = new WebSocket(
-    `wss://${InstanceUrl}/api/v1/streaming/?access_token=${AccessToken}`,
-  );
+  let socket: WebSocket;
+  try {
+    socket = new WebSocket(
+      `wss://${InstanceUrl}/api/v1/streaming/?access_token=${AccessToken}`,
+    );
+  } catch (e) {
+    setTimeout(() => {
+      openStream(id, acct);
+    }, 1000 * 30);
+    console.error("[error] new WebSocket");
+    console.error(e);
+    return;
+  }
 
   console.debug('socket.addEventListener("open")');
   socket.addEventListener("open", (_ev) => {
@@ -527,9 +538,10 @@ async function main() {
     clearDeleteTasks();
   }, 1000 * 3600);
   openStream(id, acct);
-  deleteOrphanStatus(id);
+  const timelimit = 3600 * 24 * 7;
+  deleteOrphanStatus(id, timelimit).catch((error) => console.error(error));
   setInterval(() => {
-    deleteOrphanStatus(id);
+    deleteOrphanStatus(id, timelimit).catch((error) => console.error(error));
   }, 1000 * 3600 * 8);
 }
 

@@ -54,7 +54,7 @@ export function compareUrl(url1: string, url2: string) {
   for (const [k, v] of u1kvs) {
     if (
       u2map.get(k) === undefined ||
-      unescape(v) !== unescape(u2map.get(k) as string)
+      decodeURI(v) !== decodeURI(u2map.get(k) as string)
     ) {
       return false;
     }

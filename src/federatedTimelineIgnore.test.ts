@@ -1,3 +1,5 @@
+// noinspection HttpUrlsUsage
+
 import { test } from "./rules-federatedTimelineIgnore.ts";
 
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";

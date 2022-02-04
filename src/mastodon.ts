@@ -21,7 +21,7 @@ interface link {
 
 async function getList<T>(
   url: string,
-  breakTest?: (list: T[], next: link) => boolean,
+  breakTest?: (list: T[], newList: T[], next: link) => boolean,
 ): Promise<T[]> {
   const list: T[] = [];
   while (true) {
@@ -49,7 +49,7 @@ async function getList<T>(
     const next = links.filter((item) => item.type === "next")[0];
     if (next) {
       if (typeof breakTest === "function") {
-        if (breakTest(list, next)) {
+        if (breakTest(list, json, next)) {
           console.info("[getList] break");
           break;
         }
@@ -216,8 +216,8 @@ export function getAccoutStatus(
   if (timelimitSeconds) {
     limit = Date.now() - (timelimitSeconds * 1000);
   }
-  const breakTest = (list: Status[], _next: link) => {
-    const matchs = list.map((s) => s.created_at).filter((created_at) => {
+  const breakTest = (_list: Status[], newList: Status[], _next: link) => {
+    const matchs = newList.map((s) => s.created_at).filter((created_at) => {
       return new Date(created_at).getTime() - limit > 0;
     });
     return matchs.length === 0;
