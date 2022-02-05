@@ -412,7 +412,13 @@ function openStream(id: string, acct: string) {
         account,
       } = data;
       try {
+        deteleTaskList.set(in_reply_to_id as string, {
+          id: in_reply_to_id as string,
+          expired: Date.now(),
+          timeoutID: 0,
+        });
         await deleteStatus(in_reply_to_id as string);
+        deteleTaskList.delete(in_reply_to_id as string);
         const text =
           `接收到删除指令，执行删除操作成功！\n您现在可以移除删除指令嘟文了。\n\n本条通知嘟文将在3分钟后自动删除，如有更多疑问请联系 https://bgme.me/@bgme \n\n@${account.acct}`;
         await postStatusWithExpire(text, {
@@ -426,7 +432,7 @@ function openStream(id: string, acct: string) {
 
     async function handleMentionStatus(data: Status) {
       const s = await handleStatus(data);
-      if (!s) {
+      if (typeof s === "undefined") {
         const text =
           `已收到您的嘟文，但未在您的嘟文中发现指令、含有追踪参数的链接或短链接。\n如查您尝试使用指令，请确保单词前已包含 ! 。\n如您尝试过滤链接，这可能由于过滤规则不完善造成。\n您可以联系 https://bgme.me/@bgme 寻求进一步帮助。\n\n本条通知嘟文将在3分钟后自动删除。\n\n@${data.account.acct}`;
         postStatusWithExpire(text, {
@@ -500,7 +506,7 @@ async function deleteOrphanStatus(id: string, timeLimitSeconds?: number) {
     s.content.includes("发现含有追踪参数的链接或短链接，详情如下：") && s.in_reply_to_id === null
   );
   const taskIds = orphanList.map((s) => s.id);
-  const timeCost = (taskIds.length / 60) * 3600 * 1000;
+  const timeCost = taskIds.length * 1000 * 60;
   console.info(
     `[deleteOrphanStatus] Delete Task list length: ${taskIds.length}, expect time cost: ${timeCost} ms`,
   );
