@@ -93,7 +93,8 @@ function openStream(id: string, acct: string) {
   console.debug('socket.addEventListener("open")');
   socket.addEventListener("open", (_ev) => {
     socket.send('{"type":"subscribe","stream":"user"}');
-    socket.send('{"type":"subscribe","stream":"public"}');
+    // 暂时禁用 Federated Timeline
+    // socket.send('{"type":"subscribe","stream":"public"}');
     socketExist = true;
     Deno.addSignalListener("SIGINT", sigIntHandler);
     console.info("[websocket] open websocket");
