@@ -296,7 +296,7 @@ function openStream(id: string, acct: string) {
         return "发现含有追踪参数的链接或短链接，详情如下：\n\n" +
           texts.join("\n\n") +
           "\n\n" +
-          "当您删除含有追踪参数的链接或短链接的嘟文后，可使用 delete 指令删除本条回复嘟文。\n更多信息可参见：https://bgme.me/@url/107733097656542346" +
+          "当您删除含有追踪参数的链接或短链接的嘟文后，本条回复嘟文将在一段时间后自动删除。你也可使用 !delete 指令立刻删除本条回复嘟文。" +
           "\n\n" + _mentions.map((m) => `@${m}`).join(" ");
       }
 
