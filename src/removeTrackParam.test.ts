@@ -103,6 +103,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://go.microsoft.com/fwlink/?linkid=2061461"),
     "https://support.microsoft.com/windows/core-isolation-e30ed737-17d8-42f3-a2a9-87521df09b78",
   );
+  assertEquals(
+    await clean("https://ift.tt/3fMM9uf"),
+    "https://www.iyouport.org/%E8%8B%8F%E8%81%94%E4%BD%9C%E5%AE%B6%E8%81%94%E7%9B%9F%E7%B1%BB%E4%BC%BC%E4%BA%8E%E4%B8%AD%E5%9B%BD%E4%BD%9C%E5%8D%8F%EF%BC%9A%E4%B8%80%E4%B8%AA%E8%AD%A6%E7%A4%BA%E6%95%85%E4%BA%8B%EF%BC%8C%E4%B8%80/",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
