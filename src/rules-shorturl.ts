@@ -73,11 +73,15 @@ async function follow(url: string) {
   }
 }
 
-async function extractFromHTML(url: string, selector: string) {
+async function extractFromHTML(
+  url: string,
+  selector: string,
+  attribute = "href",
+) {
   const resp = await get(url);
   if (new URL(resp.url).hostname === new URL(url).hostname) {
     const elem = parse(await resp.text());
-    const out = elem.querySelector(selector)?.getAttribute("href")?.trim();
+    const out = elem.querySelector(selector)?.getAttribute(attribute)?.trim();
     if (out) {
       return out;
     } else {
@@ -318,6 +322,7 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
     (url) =>
       extractFromHTML(url, ".panel-body > p:nth-child(1) > a:nth-child(1)"),
   ],
+  ["reurl.cc", (url) => extractFromHTML(url, "#url", "value")],
   // bitly.com
   ["j.mp", follow],
   ["bit.ly", follow],

@@ -47,7 +47,22 @@ function removeTrackParm(_url: string) {
           reKeep(w);
         } else {
           // Rule Object
-          if (url.pathname.startsWith(w.pathname)) {
+          if (w.pathname instanceof RegExp && w.pathname.test(url.pathname)) {
+            if (typeof w.search === "string") {
+              const s = search.get(w.search);
+              if (s) {
+                keep.set(w.search, s);
+              }
+            } else if (w.search instanceof RegExp) {
+              reKeep(w.search);
+            } else {
+              // boolen
+              return url.href;
+            }
+          } else if (
+            typeof w.pathname === "string" &&
+            url.pathname.startsWith(w.pathname)
+          ) {
             if (typeof w.search === "string") {
               const s = search.get(w.search);
               if (s) {
@@ -76,7 +91,15 @@ function removeTrackParm(_url: string) {
         reRemove(s);
       } else {
         // Rule Object
-        if (url.pathname.startsWith(s.pathname)) {
+        if (s.pathname instanceof RegExp && s.pathname.test(url.pathname)) {
+          if (typeof s.search === "string") {
+            search.delete(s.search);
+          } else if (s.search instanceof RegExp) {
+            reRemove(s.search);
+          }
+        } else if (
+          typeof s.pathname === "string" && url.pathname.startsWith(s.pathname)
+        ) {
           if (typeof s.search === "string") {
             search.delete(s.search);
           } else if (s.search instanceof RegExp) {
@@ -141,7 +164,7 @@ async function cli() {
   const { parse } = await import("https://deno.land/std/flags/mod.ts");
   const args = parse(Deno.args);
   // noinspection ES6MissingAwait
-  args._.forEach(async (url) => {
+  args._.forEach(async (url: string | number) => {
     console.info(
       `原URL：${url}\n处理后URL：${await clean(url as string)}\n\n`,
     );

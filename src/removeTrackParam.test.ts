@@ -137,6 +137,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://t.tl/5pqk"),
     "https://segmentfault.com/q/1010000014169010",
   );
+  assertEquals(
+    await clean("https://reurl.cc/5qRvv7"),
+    "https://www.youtube.com/watch?v=xESa_v32HGU",
+  );
 
   console.info("开始测试黑名单……");
   assertEquals(
@@ -168,6 +172,12 @@ Deno.test("Remove Track Param", async () => {
       "https://podcasts.apple.com/us/podcast/%E5%AF%BB%E8%B8%AA%E8%A7%85%E5%BD%B1-her-unfolding-stories/id1600854959?i=1000549119908",
     ),
     "https://podcasts.apple.com/us/podcast/%E5%AF%BB%E8%B8%AA%E8%A7%85%E5%BD%B1-her-unfolding-stories/id1600854959",
+  );
+  assertEquals(
+    await clean(
+      "https://www.alza.de/gaming/lego-harry-potter-collection-years-1-8-ps4-d4526446.htm?kampan=test",
+    ),
+    "https://www.alza.de/gaming/lego-harry-potter-collection-years-1-8-ps4-d4526446.htm",
   );
 
   console.info("开始测试白名单……");
