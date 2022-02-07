@@ -107,6 +107,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://ift.tt/3fMM9uf"),
     "https://www.iyouport.org/%E8%8B%8F%E8%81%94%E4%BD%9C%E5%AE%B6%E8%81%94%E7%9B%9F%E7%B1%BB%E4%BC%BC%E4%BA%8E%E4%B8%AD%E5%9B%BD%E4%BD%9C%E5%8D%8F%EF%BC%9A%E4%B8%80%E4%B8%AA%E8%AD%A6%E7%A4%BA%E6%95%85%E4%BA%8B%EF%BC%8C%E4%B8%80/",
   );
+  assertEquals(
+    await clean("http://reut.rs/3LfDnU8"),
+    "https://www.reuters.com/world/asia-pacific/indonesia-bans-foreign-tourist-arrivals-jakarta-airport-covid-19-spikes-2022-02-07/",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
