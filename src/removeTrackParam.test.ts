@@ -111,6 +111,14 @@ Deno.test("Remove Track Param", async () => {
     await clean("http://reut.rs/3LfDnU8"),
     "https://www.reuters.com/world/asia-pacific/indonesia-bans-foreign-tourist-arrivals-jakarta-airport-covid-19-spikes-2022-02-07/",
   );
+  assertEquals(
+    await clean("http://r6d.cn/bxeag"),
+    "https://xboxeer.github.io/NScrapy/",
+  );
+  assertEquals(
+    await clean(" https://g.co/kgs/sAADQR"),
+    "https://www.google.com/search?hl=en-US&si=ANhW_NqMq05hm_NHatki2oB83qRn9HU6YTauVAJv82wgMbWR1YYV-flD0q2rG5jqbvVrnIn68dDs0MGW5Hd1VTR2N9x0pws0hw%3D%3D&kgs=838f00c858aa68hndl=18&entrypoint=sh%2Fx%2Fkp%2Fee",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
