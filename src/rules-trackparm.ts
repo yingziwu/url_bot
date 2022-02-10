@@ -2,7 +2,7 @@ export type ValueOf<T> = T[keyof T];
 
 // Base on
 // https://github.com/AdguardTeam/AdguardFilters/blob/b670b623fa3264dcb6130f087758b04431cc3a6a/TrackParamFilter/sections/
-// https://github.com/yingziwu/ublock-rules/blob/22e851a6f4de054fb99224591ba7dc28b295e0e6/src/trackparam.txt
+// https://github.com/yingziwu/ublock-rules/blob/7fde4da2956ab22250bc4c8fc82fdeb710b075e4/src/trackparam.txt
 export const general = [
   "nx_source",
   "_zucks_suid",
@@ -537,6 +537,15 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
   "bbs.jjwxc.net": ["boardpagemsg"],
   "reuters.com": ["taid"],
   "caixin.com": ["cxw", "Sfrom", "originReferrer"],
+  "tieba.baidu.com": [
+    "share",
+    "fr",
+    "sfc",
+    "client_type",
+    "client_version",
+    "st",
+    "unique",
+  ],
 };
 const whitelist: Record<string, (string | RegExp | rule)[] | true> = {
   "tix.axs.com": true,
