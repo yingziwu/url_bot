@@ -2,7 +2,7 @@ export type ValueOf<T> = T[keyof T];
 
 // Base on
 // https://github.com/AdguardTeam/AdguardFilters/blob/b670b623fa3264dcb6130f087758b04431cc3a6a/TrackParamFilter/sections/
-// https://github.com/yingziwu/ublock-rules/blob/7fde4da2956ab22250bc4c8fc82fdeb710b075e4/src/trackparam.txt
+// https://github.com/yingziwu/ublock-rules/blob/a39401ef1b8f1f2863d981d4f991c6b62efa177a/src/trackparam.txt
 export const general = [
   "nx_source",
   "_zucks_suid",
@@ -419,6 +419,8 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "subscene",
     "clicktime",
     "enterid",
+    "sharer_sharetime",
+    "sharer_shareid",
   ],
   "pixel.adsafeprotected.com": [
     { pathname: "/services/pub", search: "slot" },

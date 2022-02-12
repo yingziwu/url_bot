@@ -157,6 +157,12 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://reurl.cc/5qRvv7"),
     "https://www.youtube.com/watch?v=xESa_v32HGU",
   );
+  assertEquals(
+    await clean(
+      "https://www.google.com/amp/s/www.pbs.org/newshour/amp/show/why-a-russian-evasion-of-ukraine-appears-imminent-despite-intense-diplomatic-efforts",
+    ),
+    "https://www.pbs.org/newshour/show/why-a-russian-evasion-of-ukraine-appears-imminent-despite-intense-diplomatic-efforts",
+  );
 
   console.info("开始测试黑名单……");
   assertEquals(
