@@ -548,6 +548,7 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "st",
     "unique",
   ],
+  "itunes.apple.com": ["pt", "ct", "mt"],
 };
 const whitelist: Record<string, (string | RegExp | rule)[] | true> = {
   "tix.axs.com": true,
