@@ -2,7 +2,7 @@ export type ValueOf<T> = T[keyof T];
 
 // Base on
 // https://github.com/AdguardTeam/AdguardFilters/blob/b670b623fa3264dcb6130f087758b04431cc3a6a/TrackParamFilter/sections/
-// https://github.com/yingziwu/ublock-rules/blob/a39401ef1b8f1f2863d981d4f991c6b62efa177a/src/trackparam.txt
+// https://github.com/yingziwu/ublock-rules/blob/97428bc856127b4c981fefa4ac0f39c028abd21f/src/trackparam.txt
 export const general = [
   "nx_source",
   "_zucks_suid",
@@ -515,7 +515,7 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
   "bbc.com": ["ocid", "at_medium", "at_campaign", /^at_custom/],
   "bbc.co.uk": ["ocid", "at_medium", "at_campaign", /^at_custom/],
   "youtube.com": ["feature"],
-  "douban.com": ["_i", "_dtcc"],
+  "douban.com": ["_i", "_dtcc", "from"],
   "v.youku.com": ["sharefrom", "sharekey"],
   "www.xiaoyuzhoufm.com": ["s"],
   "m.baidu.com": [

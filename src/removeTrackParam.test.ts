@@ -123,6 +123,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("http://dlvr.it/SJsD6Z"),
     "https://www.williamlong.info/archives/6706.html",
   );
+  assertEquals(
+    await clean("https://wp.me/pbKqHZ-16I"),
+    "https://jiangshanghan.art.blog/2022/02/14/%e6%99%a8%e5%85%89%e6%92%a9%e4%ba%ba/",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
