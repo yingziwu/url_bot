@@ -135,6 +135,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://rxau.pse.is/3w82ac"),
     "https://technews.tw/2022/02/14/spacex-falcon-9-rocket-we0913a-change-5-t1-spacecraft-long-march-3c/",
   );
+  assertEquals(
+    await clean("http://navo.top/UN7ZFv"),
+    "https://live.polyv.cn/watch/2838045",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
