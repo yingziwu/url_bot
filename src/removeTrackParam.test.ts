@@ -241,4 +241,12 @@ Deno.test("Remove Track Param", async () => {
     ),
     "https://www.dodge.com/mediaserver/iris?COSY-EU-100-1713uLDEMTV1r9s%25WBXaBKFmfKSLC9gIQALMc6UhVkmGBfM9IW2VRkr72kVQd9pivwXGXQpMTV1rUp3g6OQCckPquBhS1U%25jzbTllxA0zmil%253QFmwpDkpd2dTBoM&&pov=fronthero&width=332&height=230&bkgnd=white&resp=jpg&cut=&utm_source=Tg7xBrzswYZ",
   );
+
+  console.info("开始测试其它情况……");
+  assertEquals(
+    await clean(
+      "magnet:?xt=urn:btih:dc718539145bde27dddb5e94c67949e6d1c8513c&dn=integdev_gpu_drv.rar&tr=udp%3a%2f%2ftracker.openbittorrent.com%3a80&tr=udp%3a%2f%2ftracker.opentrackr.org%3a1337%2fannounce",
+    ),
+    "magnet:?xt=urn:btih:dc718539145bde27dddb5e94c67949e6d1c8513c&dn=integdev_gpu_drv.rar&tr=udp%3a%2f%2ftracker.openbittorrent.com%3a80&tr=udp%3a%2f%2ftracker.opentrackr.org%3a1337%2fannounce",
+  );
 });
