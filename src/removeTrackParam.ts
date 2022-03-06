@@ -31,6 +31,10 @@ function removeTrackParm(_url: string) {
   const host = url.hostname;
   const search = url.searchParams;
 
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    return _url;
+  }
+
   const keep: Map<string, string> = new Map();
   const white = find(host, whitelist);
   if (white) {
