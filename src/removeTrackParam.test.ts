@@ -147,6 +147,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://0rz.tw/WKtEG"),
     "https://www.youtube.com/watch?v=z67BZ1T0ehU",
   );
+  assertEquals(
+    await clean("http://lxi.me/xmooh"),
+    "https://donate.bangbangwang.cn/p/ca4x83g5ep9wn0rr4oml20mlo1qyzv27",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(

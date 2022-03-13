@@ -2,7 +2,7 @@ export type ValueOf<T> = T[keyof T];
 
 // Base on
 // https://github.com/AdguardTeam/AdguardFilters/blob/b670b623fa3264dcb6130f087758b04431cc3a6a/TrackParamFilter/sections/
-// https://github.com/yingziwu/ublock-rules/blob/97428bc856127b4c981fefa4ac0f39c028abd21f/src/trackparam.txt
+// https://github.com/yingziwu/ublock-rules/blob/35844573cc6db4ab0a3e0fb17ae1fa60bafbe752/src/trackparam.txt
 export const general = [
   "nx_source",
   "_zucks_suid",
@@ -93,6 +93,7 @@ export const general = [
   "irgwc",
   "dclid",
   // bgme
+  "utm_bccid",
   "dt_dapp",
   "dt_platform",
   "spm",

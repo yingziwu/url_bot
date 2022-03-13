@@ -269,6 +269,7 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["navo.top", follow],
   ["rfi.my", follow],
   ["0rz.tw", follow],
+  ["lxi.me", follow],
   [
     "t.co",
     (url) => {
