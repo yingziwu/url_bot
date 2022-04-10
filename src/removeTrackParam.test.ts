@@ -151,6 +151,14 @@ Deno.test("Remove Track Param", async () => {
     await clean("http://lxi.me/xmooh"),
     "https://donate.bangbangwang.cn/p/ca4x83g5ep9wn0rr4oml20mlo1qyzv27",
   );
+  assertEquals(
+    await clean("https://kutt.appinn.net/uq9vp4"),
+    "https://greasyfork.org/zh-CN/scripts/442187-open-the-link-directly",
+  );
+  assertEquals(
+    await clean("https://xczs.vip/f/60451f"),
+    "http://h5.quicktour.cn/village/%E9%9D%99%E5%AE%89%E5%8C%BA",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
