@@ -204,6 +204,20 @@ Deno.test("Remove Track Param", async () => {
     "https://www.pbs.org/newshour/show/why-a-russian-evasion-of-ukraine-appears-imminent-despite-intense-diplomatic-efforts",
   );
 
+  console.info("开始测试其他域名规则");
+  assertEquals(
+    await clean(
+      "https://share.api.weibo.cn/share/298799668,4759038422680085.html",
+    ),
+    "https://m.weibo.cn/status/4759038422680085",
+  );
+  assertEquals(
+    await clean(
+      "https://share.api.weibo.cn/share/297687435,4757578406169966.html?weibo_id=4757578406169966&wx=1",
+    ),
+    "https://m.weibo.cn/status/4757578406169966",
+  );
+
   console.info("开始测试黑名单……");
   assertEquals(
     await clean(

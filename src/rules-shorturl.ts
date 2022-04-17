@@ -387,4 +387,15 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
       return Promise.resolve(url);
     }
   }],
+  //Weibo
+  ["share.api.weibo.cn", (url) => {
+    const pattern = new URLPattern({ pathname: "/share/:uid,:id.html" });
+    const patternResult = pattern.exec(url);
+    if (patternResult) {
+      const id = patternResult.pathname.groups.id;
+      return Promise.resolve(`https://m.weibo.cn/status/${id}`);
+    } else {
+      return Promise.resolve(url);
+    }
+  }],
 ]);
