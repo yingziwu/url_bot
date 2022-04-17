@@ -1,4 +1,3 @@
-///  <reference types="./mastodon.d.ts" />
 import { deleteTask, deteleTaskList } from "./deteleTaskList.ts";
 import { AccessToken, InstanceUrl } from "./http.ts";
 import { compareUrl, getTexts, parse, sleep } from "./lib.ts";
@@ -499,6 +498,9 @@ function clearDeleteTasks() {
         deteleTaskList.delete(task.id);
       } catch (error) {
         console.error(error);
+        if (error.message === '{"error":"Record not found"}') {
+          deteleTaskList.delete(task.id);
+        }
       }
     }, diff);
     task.timeoutID = timeoutID;
