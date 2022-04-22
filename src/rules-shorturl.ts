@@ -379,6 +379,7 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["6.gp", follow],
   ["5.gp", follow],
   ["ur3.us", follow],
+  ["nyti.ms", follow],
   // AMP
   ["www.google.com", (url) => {
     if ((new URL(url)).pathname.startsWith("/amp/")) {

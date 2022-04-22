@@ -159,6 +159,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://xczs.vip/f/60451f"),
     "http://h5.quicktour.cn/village/%E9%9D%99%E5%AE%89%E5%8C%BA",
   );
+  assertEquals(
+    await clean("https://nyti.ms/3EJyP5G"),
+    "https://www.nytimes.com/zh-hans/2022/04/21/world/asia/covid-shanghai-ukraine-great-firewall.html?smid=tw-nytimes&smtyp=cur",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
