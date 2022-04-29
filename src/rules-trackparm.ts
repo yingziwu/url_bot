@@ -2,7 +2,7 @@ export type ValueOf<T> = T[keyof T];
 
 // Base on
 // https://github.com/AdguardTeam/AdguardFilters/blob/b670b623fa3264dcb6130f087758b04431cc3a6a/TrackParamFilter/sections/
-// https://github.com/yingziwu/ublock-rules/blob/35844573cc6db4ab0a3e0fb17ae1fa60bafbe752/src/trackparam.txt
+// https://github.com/yingziwu/ublock-rules/blob/bcc246a0acccdf82c4f7625f5a039d5fd5167cef/src/trackparam.txt
 export const general = [
   "nx_source",
   "_zucks_suid",
@@ -99,6 +99,7 @@ export const general = [
   "spm",
   "scm",
   "refer_uri_app",
+  "wechatShare",
 ];
 
 interface rule {
@@ -268,6 +269,9 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "ref_campaign",
     "ref_source",
     "ref",
+    "$deep_link",
+    "post_index",
+    "$3p",
   ],
   "adj.st": ["CollectionId", "adjust_deeplink"],
   "data.alexa.com": [
@@ -422,6 +426,7 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "enterid",
     "sharer_sharetime",
     "sharer_shareid",
+    "sessionid",
   ],
   "pixel.adsafeprotected.com": [
     { pathname: "/services/pub", search: "slot" },
@@ -551,6 +556,12 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
   ],
   "itunes.apple.com": ["pt", "ct", "mt"],
   "rfi.fr": ["ref"],
+  "xiaohongshu.com": [
+    "share_from_user_hidden",
+    "xhsshare",
+    "appuid",
+    "apptime",
+  ],
 };
 const whitelist: Record<string, (string | RegExp | rule)[] | true> = {
   "tix.axs.com": true,

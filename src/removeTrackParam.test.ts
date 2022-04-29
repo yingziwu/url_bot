@@ -170,6 +170,10 @@ Deno.test("Remove Track Param", async () => {
     "https://harrydenley.com/faking-twitter-unfurling/",
   );
   assertEquals(
+    await clean("https://xhslink.com/sc2AZg"),
+    "https://www.xiaohongshu.com/discovery/item/626a84bb000000000102b3eb",
+  );
+  assertEquals(
     await clean("https://douc.cc/0cdUDB"),
     "https://ukiyo1220.blogspot.com/2021/05/blog-post.html?m=1",
   );

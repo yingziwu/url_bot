@@ -272,6 +272,7 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["lxi.me", follow],
   ["kutt.appinn.net", follow],
   ["xczs.vip", follow],
+  ["nyti.ms", follow],
   [
     "t.co",
     (url) => {
@@ -279,6 +280,18 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
       return followA(url, nGet);
     },
   ],
+  ["xhslink.com", async (url) => {
+    const resp = await get(url, undefined, "manual");
+    if (resp.status === 302 || resp.status === 307) {
+      const location = resp.headers.get("location");
+      if (location && (new URL(location).hostname === "www.xiaohongshu.com")) {
+        await resp.body?.cancel();
+        return location;
+      }
+    }
+    await resp.body?.cancel();
+    throw new Error(`展开短网址时出错：${url}`);
+  }],
   [
     "t.cn",
     async (url) => {
@@ -298,7 +311,7 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
         await resp.body?.cancel();
         if (resp.url.startsWith("https://passport.weibo.com/visitor/")) {
           const resp2 = await get(url, undefined, "manual");
-          if (resp2.status === 302) {
+          if (resp2.status === 302 || resp2.status === 307) {
             await resp2.body?.cancel();
             const location = resp2.headers.get("location");
             if (location) {
@@ -379,7 +392,6 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["6.gp", follow],
   ["5.gp", follow],
   ["ur3.us", follow],
-  ["nyti.ms", follow],
   // AMP
   ["www.google.com", (url) => {
     if ((new URL(url)).pathname.startsWith("/amp/")) {
