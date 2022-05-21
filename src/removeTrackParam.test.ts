@@ -163,6 +163,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://nyti.ms/3EJyP5G"),
     "https://www.nytimes.com/zh-hans/2022/04/21/world/asia/covid-shanghai-ukraine-great-firewall.html?smid=tw-nytimes&smtyp=cur",
   );
+  assertEquals(
+    await clean("https://lat.ms/3wvGBwe"),
+    "https://www.latimes.com/california/story/2022-05-16/laguna-woods-gunman-worked-methodically-but-motive-a-mystery",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
@@ -222,6 +226,12 @@ Deno.test("Remove Track Param", async () => {
   assertEquals(
     await clean(
       "https://share.api.weibo.cn/share/297687435,4757578406169966.html?weibo_id=4757578406169966&wx=1",
+    ),
+    "https://m.weibo.cn/status/4757578406169966",
+  );
+  assertEquals(
+    await clean(
+      "https://share.api.weibo.cn/share/297687435.html?weibo_id=4757578406169966",
     ),
     "https://m.weibo.cn/status/4757578406169966",
   );

@@ -273,6 +273,7 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["kutt.appinn.net", follow],
   ["xczs.vip", follow],
   ["nyti.ms", follow],
+  ["lat.ms", follow],
   [
     "t.co",
     (url) => {
@@ -402,11 +403,18 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   }],
   //Weibo
   ["share.api.weibo.cn", (url) => {
-    const pattern = new URLPattern({ pathname: "/share/:uid,:id.html" });
-    const patternResult = pattern.exec(url);
-    if (patternResult) {
-      const id = patternResult.pathname.groups.id;
-      return Promise.resolve(`https://m.weibo.cn/status/${id}`);
+    let weibo_id = new URL(url).searchParams.get("weibo_id");
+
+    if (weibo_id === null) {
+      const pattern = new URLPattern({ pathname: "/share/:uid,:id.html" });
+      const patternResult = pattern.exec(url);
+      if (patternResult) {
+        weibo_id = patternResult.pathname.groups.id;
+      }
+    }
+
+    if (weibo_id) {
+      return Promise.resolve(`https://m.weibo.cn/status/${weibo_id}`);
     } else {
       return Promise.resolve(url);
     }
