@@ -171,6 +171,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://bbc.in/39fffmk"),
     "https://www.youtube.com/watch?v=I0DJlSqlmEw",
   );
+  assertEquals(
+    await clean("https://trib.al/uxLXLud"),
+    "https://www.bbc.com/news/live/world-africa-61177536",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
