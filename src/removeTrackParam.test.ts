@@ -167,6 +167,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://lat.ms/3wvGBwe"),
     "https://www.latimes.com/california/story/2022-05-16/laguna-woods-gunman-worked-methodically-but-motive-a-mystery",
   );
+  assertEquals(
+    await clean("https://bbc.in/39fffmk"),
+    "https://www.youtube.com/watch?v=I0DJlSqlmEw",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(

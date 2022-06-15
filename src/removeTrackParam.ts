@@ -84,7 +84,13 @@ function removeTrackParm(_url: string) {
     }
   }
 
-  general.forEach((s) => search.delete(s));
+  general.forEach((s) => {
+    if (typeof s === "string") {
+      search.delete(s);
+    } else if (s instanceof RegExp) {
+      reRemove(s);
+    }
+  });
 
   const special = find(host, specific);
   if (Array.isArray(special)) {

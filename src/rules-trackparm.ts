@@ -3,7 +3,7 @@ export type ValueOf<T> = T[keyof T];
 // Base on
 // https://github.com/AdguardTeam/AdguardFilters/blob/b670b623fa3264dcb6130f087758b04431cc3a6a/TrackParamFilter/sections/
 // https://github.com/yingziwu/ublock-rules/blob/bcc246a0acccdf82c4f7625f5a039d5fd5167cef/src/trackparam.txt
-export const general = [
+export const general: (string | RegExp)[] = [
   "nx_source",
   "_zucks_suid",
   "cmpid",
@@ -100,6 +100,10 @@ export const general = [
   "scm",
   "refer_uri_app",
   "wechatShare",
+  // bbc
+  "at_medium",
+  "at_campaign",
+  /^at_custom/,
 ];
 
 interface rule {
