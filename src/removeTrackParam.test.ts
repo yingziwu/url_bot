@@ -277,6 +277,12 @@ Deno.test("Remove Track Param", async () => {
     ),
     "https://www.alza.de/gaming/lego-harry-potter-collection-years-1-8-ps4-d4526446.htm",
   );
+  assertEquals(
+    await clean(
+      "https://www.shuidichou.com/cf/contribute/b4cd5a68-75ef-46ae-b2ad-90e8efba72d0?channel=wx_charity_pyq&source=GCzh3dZhnHkctnkkFQ21655273587572&forwardFrom=5&sharedv=2&userSourceId=5aYCT_arunuKA_gDkvmTPA&shareId=iBDDwJhEHaCw2h5ciQ31655273589444&shareIdV2=xGKWfGGGH8iT5jwNsHW1655273589368",
+    ),
+    "https://www.shuidichou.com/cf/contribute/b4cd5a68-75ef-46ae-b2ad-90e8efba72d0",
+  );
 
   console.info("开始测试白名单……");
   assertEquals(

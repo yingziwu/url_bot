@@ -2,7 +2,7 @@ export type ValueOf<T> = T[keyof T];
 
 // Base on
 // https://github.com/AdguardTeam/AdguardFilters/blob/b670b623fa3264dcb6130f087758b04431cc3a6a/TrackParamFilter/sections/
-// https://github.com/yingziwu/ublock-rules/blob/bcc246a0acccdf82c4f7625f5a039d5fd5167cef/src/trackparam.txt
+// https://github.com/yingziwu/ublock-rules/blob/f9422107ccb55f7e40d61f70cab8c326a428b3e8/src/trackparam.txt
 export const general: (string | RegExp)[] = [
   "nx_source",
   "_zucks_suid",
@@ -199,6 +199,7 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     { pathname: "/search", search: "sourceid" },
     { pathname: "/search", search: "ei" },
     { pathname: "/search", search: "gs_lcp" },
+    "shorturl",
   ],
   "lotto.gmx.*": ["partnerId", "advertisementId"],
   "shopping.gmx.*": ["origin"],
@@ -431,6 +432,13 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "sharer_sharetime",
     "sharer_shareid",
     "sessionid",
+    "v_p",
+    "WBAPIAnalysisOriUICodes",
+    "launchid",
+    "wm",
+    "aid",
+    "isappinstalled",
+    "forceh5",
   ],
   "pixel.adsafeprotected.com": [
     { pathname: "/services/pub", search: "slot" },
@@ -519,11 +527,14 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "refer_from",
     "bbid",
     "ts",
+    "-Arouter",
+    "broadcast_type",
+    "is_room_feed",
   ],
   "search.bilibili.com": ["from_source"],
   // bgme
-  "bbc.com": ["ocid", "at_medium", "at_campaign", /^at_custom/],
-  "bbc.co.uk": ["ocid", "at_medium", "at_campaign", /^at_custom/],
+  "bbc.com": ["ocid"],
+  "bbc.co.uk": ["ocid"],
   "youtube.com": ["feature"],
   "douban.com": ["_i", "_dtcc", "from"],
   "v.youku.com": ["sharefrom", "sharekey"],
@@ -565,6 +576,13 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "xhsshare",
     "appuid",
     "apptime",
+  ],
+  "shuidichou.com": [
+    "channel",
+    "source",
+    "forwardFrom",
+    "userSourceId",
+    /^share/,
   ],
 };
 const whitelist: Record<string, (string | RegExp | rule)[] | true> = {
