@@ -421,4 +421,36 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
       return Promise.resolve(url);
     }
   }],
+  // Taobao
+  [
+    "m.tb.cn",
+    async (url) => {
+      const resp = await get(url);
+      const text = await resp.text();
+      const lineAfterFilter = text.split("\n").filter((l) =>
+        l.includes("var url = 'http")
+      );
+      if (lineAfterFilter.length === 1) {
+        const jumpUrl = lineAfterFilter[0].trim().replace(
+          "var url = '",
+          "",
+        )
+          .replace("';", "");
+        const resp2 = await get(jumpUrl, undefined, "manual");
+        if (resp2.status >= 300 && resp2.status < 400) {
+          const location = resp2.headers.get("location");
+          if (
+            location && (new URL(location).hostname === "item.taobao.com")
+          ) {
+            await resp2.body?.cancel();
+            return location;
+          }
+        }
+        await resp2.body?.cancel();
+        throw new Error(`展开短网址时出错：${url}`);
+      } else {
+        throw new Error(`展开短网址时出错：${url}`);
+      }
+    },
+  ],
 ]);

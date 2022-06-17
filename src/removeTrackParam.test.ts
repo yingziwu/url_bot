@@ -223,6 +223,10 @@ Deno.test("Remove Track Param", async () => {
     ),
     "https://www.pbs.org/newshour/show/why-a-russian-evasion-of-ukraine-appears-imminent-despite-intense-diplomatic-efforts",
   );
+  assertEquals(
+    await clean("https://m.tb.cn/h.fJ99Qyf?tk=4jUK2jTltaE"),
+    "https://item.taobao.com/item.htm?id=673381652324",
+  );
 
   console.info("开始测试其他域名规则");
   assertEquals(
