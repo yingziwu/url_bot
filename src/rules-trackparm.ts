@@ -2,7 +2,7 @@ export type ValueOf<T> = T[keyof T];
 
 // Base on
 // https://github.com/AdguardTeam/AdguardFilters/blob/b670b623fa3264dcb6130f087758b04431cc3a6a/TrackParamFilter/sections/
-// https://github.com/yingziwu/ublock-rules/blob/dee6011744f3fa4f336bb979c8199609abba7f07/src/trackparam.txt
+// https://github.com/yingziwu/ublock-rules/blob/c294c0f8f149d9f15ff6abcea5ba62e1bffe1bd8/src/trackparam.txt
 export const general: (string | RegExp)[] = [
   "nx_source",
   "_zucks_suid",
@@ -602,6 +602,11 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "bxsign",
     "tk",
     "app",
+  ],
+  "baijiahao.baidu.com": [
+    "wfr",
+    "for",
+    "searchword",
   ],
 };
 const whitelist: Record<string, (string | RegExp | rule)[] | true> = {
