@@ -77,13 +77,23 @@ async function extractFromHTML(
   url: string,
   selector: string,
   attribute = "href",
+  postHook?: (url: string) => string,
 ) {
   const resp = await get(url);
   if (new URL(resp.url).hostname === new URL(url).hostname) {
     const elem = parse(await resp.text());
-    const out = elem.querySelector(selector)?.getAttribute(attribute)?.trim();
+    let out: string | undefined;
+    if (attribute === "") {
+      out = elem.querySelector(selector)?.innerHTML?.trim();
+    } else {
+      out = elem.querySelector(selector)?.getAttribute(attribute)?.trim();
+    }
     if (out) {
-      return out;
+      if (typeof postHook === "function") {
+        return postHook(out);
+      } else {
+        return out;
+      }
     } else {
       throw new Error(`展开短网址时出错：${url}`);
     }
@@ -183,6 +193,7 @@ async function AdFly(url: string) {
     "download.cracksurl.com",
     "darenjarvis.pro",
     "xervoo.net",
+    "magybu.net",
   ];
   const { hostname } = new URL(resp.url);
   if (domainList.includes(hostname)) {
@@ -241,6 +252,15 @@ async function AdFly(url: string) {
   }
 }
 
+function shrunken(url: string) {
+  return extractFromHTML(
+    url,
+    "script",
+    "",
+    (out) => out.replace("window.location='", "").replace("';", ""),
+  );
+}
+
 export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["we.tl", follow],
   ["b23.tv", follow],
@@ -260,7 +280,6 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["go.microsoft.com", follow],
   ["ift.tt", follow],
   ["reut.rs", follow],
-  ["r6d.cn", follow],
   ["g.co", follow],
   ["dlvr.it", follow],
   ["wp.me", follow],
@@ -376,26 +395,23 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
       url,
       "div.main-hint > div.main-hint-text > span > a",
     )],
-  // tyson.cool
-  ["ddl.ink", follow],
-  ["tsd.ink", follow],
   // www.shrunken.com
-  ["www.shrunken.com", follow],
-  ["p.asia", follow],
-  ["g.asia", follow],
-  ["3.ly", follow],
-  ["0.gp", follow],
-  ["2.ly", follow],
-  ["4.gp", follow],
-  ["4.ly", follow],
-  ["6.ly", follow],
-  ["7.ly", follow],
-  ["8.ly", follow],
-  ["9.ly", follow],
-  ["2.gp", follow],
-  ["6.gp", follow],
-  ["5.gp", follow],
-  ["ur3.us", follow],
+  ["www.shrunken.com", shrunken],
+  ["p.asia", shrunken],
+  ["g.asia", shrunken],
+  ["3.ly", shrunken],
+  ["0.gp", shrunken],
+  ["2.ly", shrunken],
+  ["4.gp", shrunken],
+  ["4.ly", shrunken],
+  ["6.ly", shrunken],
+  ["7.ly", shrunken],
+  ["8.ly", shrunken],
+  ["9.ly", shrunken],
+  ["2.gp", shrunken],
+  ["6.gp", shrunken],
+  ["5.gp", shrunken],
+  ["ur3.us", shrunken],
   // AMP
   ["www.google.com", (url) => {
     if ((new URL(url)).pathname.startsWith("/amp/")) {
@@ -494,4 +510,6 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["freegiftcards.co", follow],
   ["stopify.co", follow],
   ["leancoding.co", follow],
+  // https://www.ft12.com/
+  ["985.so", (url) => extractFromHTML(url, ".url > a", "")],
 ]);

@@ -533,8 +533,8 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
   ],
   "search.bilibili.com": ["from_source"],
   // bgme
-  "bbc.com": ["ocid", /^pinned_/],
-  "bbc.co.uk": ["ocid", /^pinned_/],
+  "bbc.com": ["ocid", /^pinned_/, /^ns_/],
+  "bbc.co.uk": ["ocid", /^pinned_/, /^ns_/],
   "youtube.com": ["feature"],
   "douban.com": ["_i", "_dtcc", "from"],
   "v.youku.com": ["sharefrom", "sharekey"],
