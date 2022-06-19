@@ -232,6 +232,12 @@ Deno.test("Remove Track Param", async () => {
     "https://item.taobao.com/item.htm?id=673381652324",
   );
   assertEquals(
+    await clean(
+      "https://m.tb.cn/h.fvYXILV?tk=4kcF2NDvn7d%E3%80%8C%E6%88%91%E5%9C%A8%E9%97%B2%E9%B1%BC%E5%8F%91%E5%B8%83%E4%BA%86%E3%80%90newifi",
+    ),
+    "https://h5.m.goofish.com/app/idleFish-F2e/fish-mini-pha/detail.html?id=677191267902",
+  );
+  assertEquals(
     await clean("https://grabify.link/3OUK09"),
     "https://twitter.com/wmaxeddy/status/15378730758192332",
   );

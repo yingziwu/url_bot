@@ -437,11 +437,19 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
           "",
         )
           .replace("';", "");
+        if (
+          new URL(jumpUrl).hostname === "h5.m.goofish.com" ||
+          new URL(jumpUrl).hostname === "item.taobao.com"
+        ) {
+          return jumpUrl;
+        }
         const resp2 = await get(jumpUrl, undefined, "manual");
         if (resp2.status >= 300 && resp2.status < 400) {
           const location = resp2.headers.get("location");
           if (
-            location && (new URL(location).hostname === "item.taobao.com")
+            location &&
+            ((new URL(location).hostname === "item.taobao.com") ||
+              (new URL(location).hostname === "h5.m.goofish.com"))
           ) {
             await resp2.body?.cancel();
             return location;
