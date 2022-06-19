@@ -175,6 +175,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://trib.al/uxLXLud"),
     "https://www.bbc.com/news/live/world-africa-61177536",
   );
+  assertEquals(
+    await clean("http://gg.gg/11g1zy"),
+    "https://twitter.com/wmaxeddy/status/15378730758192332",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
@@ -226,6 +230,10 @@ Deno.test("Remove Track Param", async () => {
   assertEquals(
     await clean("https://m.tb.cn/h.fJ99Qyf?tk=4jUK2jTltaE"),
     "https://item.taobao.com/item.htm?id=673381652324",
+  );
+  assertEquals(
+    await clean("https://grabify.link/3OUK09"),
+    "https://twitter.com/wmaxeddy/status/15378730758192332",
   );
 
   console.info("开始测试其他域名规则");

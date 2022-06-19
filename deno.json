@@ -1,22 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
     "lib": [
       "ESNext",
       "deno.unstable",
       "deno.window"
     ],
     "allowJs": false,
-    "declaration": true,
-    "sourceMap": false,
     "removeComments": true,
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
     "noImplicitThis": true,
-    "alwaysStrict": true,
-    "esModuleInterop": true
+    "alwaysStrict": true
   },
   "fmt": {
     "files": {

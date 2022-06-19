@@ -11,7 +11,7 @@ async function get(
     "Sec-Fetch-Mode": "navigate",
     "Sec-Fetch-Site": "cross-site",
     "User-Agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4495.0 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.61 Safari/537.36",
     "Upgrade-Insecure-Requests": "1",
   },
   redirect: RequestRedirect = "follow",
@@ -276,6 +276,7 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["lat.ms", follow],
   ["bbc.in", follow],
   ["trib.al", follow],
+  ["gg.gg", follow],
   [
     "t.co",
     (url) => {
@@ -453,4 +454,36 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
       }
     },
   ],
+  // grabify.link
+  [
+    "grabify.link",
+    (url) => extractFromHTML(url, 'meta[name="url"]', "content"),
+  ],
+  ["screenshare.pics", follow],
+  ["myprivate.pics", follow],
+  ["noodshare.pics", follow],
+  ["cheapcinema.club", follow],
+  ["shhh.lol", follow],
+  ["partpicker.shop", follow],
+  ["sportshub.bar", follow],
+  ["locations.quest", follow],
+  ["lovebird.guru", follow],
+  ["trulove.guru", follow],
+  ["dateing.club", follow],
+  ["shrekis.life", follow],
+  ["headshot.monster", follow],
+  ["gaming-at-my.best", follow],
+  ["progaming.monster", follow],
+  ["yourmy.monster", follow],
+  ["imageshare.best", follow],
+  ["screenshot.best", follow],
+  ["gamingfun.me", follow],
+  ["catsnthing.com", follow],
+  ["catsnthings.fun", follow],
+  ["joinmy.site", follow],
+  ["fortnitechat.site", follow],
+  ["fortnight.space", follow],
+  ["freegiftcards.co", follow],
+  ["stopify.co", follow],
+  ["leancoding.co", follow],
 ]);
