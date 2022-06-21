@@ -233,6 +233,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://grabify.link/3OUK09"),
     "https://twitter.com/wmaxeddy/status/1537873075819233282",
   );
+  assertEquals(
+    await clean("https://shhh.lol/FN3KJI.png"),
+    "https://img.bgme.bid/media_attachments/files/108/513/394/838/989/941/original/c4f28bf585936e6e.png",
+  );
 
   console.info("开始测试其他域名规则");
   assertEquals(

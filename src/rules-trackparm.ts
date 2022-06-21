@@ -590,18 +590,18 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "suid",
     "ut_sk",
     "un",
-    "share_crt_v",
+    /^share/,
     "un_site",
     "spm",
-    "sp_abtk",
+    /^sp_/,
     "tbSocialPopKey",
-    "sp_tk",
     "cpp",
-    "shareurl",
     "short_name",
     "bxsign",
     "tk",
     "app",
+    "iconType",
+    "detailSharePosition",
   ],
   "h5.m.goofish.com": [
     "ut_sk",
@@ -623,6 +623,10 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "wfr",
     "for",
     "searchword",
+  ],
+  "3g.163.com": [
+    "referFrom",
+    "spss",
   ],
 };
 const whitelist: Record<string, (string | RegExp | rule)[] | true> = {
