@@ -234,7 +234,7 @@ Deno.test("Remove Track Param", async () => {
     "https://twitter.com/wmaxeddy/status/1537873075819233282",
   );
   assertEquals(
-    await clean("https://shhh.lol/FN3KJI.png"),
+    await clean("https://screenshot.best/FN3KJI.png"),
     "https://img.bgme.bid/media_attachments/files/108/513/394/838/989/941/original/c4f28bf585936e6e.png",
   );
 
