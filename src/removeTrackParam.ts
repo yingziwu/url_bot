@@ -166,7 +166,11 @@ async function expandUrl(_url: string, depth?: number): Promise<string> {
 }
 
 export async function clean(url: string) {
-  url = await expandUrl(url);
+  try {
+    url = await expandUrl(url);
+  } catch (err) {
+    console.error(err);
+  }
   return removeTrackParm(url);
 }
 
