@@ -171,6 +171,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://lmg.gg/Ktd7Z"),
     "https://www.pulseway.com/land/linus?rfid=linus2021",
   );
+  assertEquals(
+    await clean("https://geni.us/p8LxdE0"),
+    "https://www.amazon.com/TC-Helicon-Vocal-Effects-Processor-GOXLR/dp/B07JKNG4NV/ref=sr_1_1",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
