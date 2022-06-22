@@ -167,6 +167,10 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://985.so/i3b2"),
     "https://example.com/",
   );
+  assertEquals(
+    await clean("https://lmg.gg/Ktd7Z"),
+    "https://www.pulseway.com/land/linus?rfid=linus2021",
+  );
 
   console.info("测试复杂短网址规则");
   assertEquals(
