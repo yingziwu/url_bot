@@ -294,10 +294,10 @@ function openStream(id: string, acct: string) {
             console.info(item);
             return `原链接：${item.before}\n净化后链接：${item.after}`;
           });
-        let out = "发现含有追踪参数的链接或短链接，详情如下：\n\n" +
+        let out = "发现含有追踪链接，详情如下：\n\n" +
           texts.join("\n\n") +
           "\n\n" +
-          "当您删除含有追踪参数的链接或短链接的嘟文后，本条回复嘟文将在一段时间后自动删除。";
+          "当您删除含有追踪链接的嘟文后，本条回复嘟文将在一段时间后自动删除。";
         if (!rebloged) {
           out = out + "你也可使用 !delete 指令立刻删除本条回复嘟文。\n\n" +
             _mentions.map((m) => `@${m}`).join(" ");
