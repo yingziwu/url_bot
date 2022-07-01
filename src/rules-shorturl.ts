@@ -252,13 +252,15 @@ async function AdFly(url: string) {
   }
 }
 
-function shrunken(url: string) {
-  return extractFromHTML(
-    url,
-    "script",
-    "",
-    (out) => out.replace("window.location='", "").replace("';", ""),
-  );
+async function shrunken(url: string) {
+  const resp = await get(url);
+  const text = await resp.text();
+  const lf = text.split("\n").filter((l) => l.includes('window.location = "'));
+  if (lf.length !== 0) {
+    return lf[0].replace('window.location = "', "").replace('";', "").trim();
+  } else {
+    return url;
+  }
 }
 
 export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
@@ -515,19 +517,19 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   // https://www.ft12.com/
   ["985.so", (url) => extractFromHTML(url, ".url > a", "")],
   // Facebook
-  ["l.facebook.com", async (url) => {
+  ["l.facebook.com", (url) => {
     const _url = new URL(url);
     const target = _url.searchParams.get("u");
-    return target ?? url;
+    return Promise.resolve(target ?? url);
   }],
-  ["www.facebook.com", async (url) => {
+  ["www.facebook.com", (url) => {
     const _url = new URL(url);
     if (_url.pathname.startsWith("/login/")) {
-      return _url.searchParams.get("next") ?? url;
+      return Promise.resolve(_url.searchParams.get("next") ?? url);
     } else if (_url.pathname.startsWith("/flx/warn/")) {
-      return _url.searchParams.get("u") ?? url;
+      return Promise.resolve(_url.searchParams.get("u") ?? url);
     } else {
-      return url;
+      return Promise.resolve(url);
     }
   }],
 ]);
