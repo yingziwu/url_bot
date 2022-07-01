@@ -4,8 +4,7 @@ import { clean } from "./removeTrackParam.ts";
 
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 
-Deno.test("Remove Track Param", async () => {
-  console.info("开始测试短链接……");
+Deno.test("简单短网址规则", async () => {
   console.info("测试简单短网址规则");
   assertEquals(
     await clean("https://b23.tv/d3BTHVL"),
@@ -141,7 +140,7 @@ Deno.test("Remove Track Param", async () => {
   );
   assertEquals(
     await clean("https://xczs.vip/f/60451f"),
-    "https://dnspod.qcloud.com/static/webblock.html?d=h5.quicktour.cn",
+    "http://h5.quicktour.cn/village/%E9%9D%99%E5%AE%89%E5%8C%BA",
   );
   assertEquals(
     await clean("https://nyti.ms/3EJyP5G"),
@@ -175,7 +174,9 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://geni.us/p8LxdE0"),
     "https://www.amazon.com/TC-Helicon-Vocal-Effects-Processor-GOXLR/dp/B07JKNG4NV/ref=sr_1_1",
   );
+});
 
+Deno.test("复杂短网址规则", async () => {
   console.info("测试复杂短网址规则");
   assertEquals(
     await clean("https://3.ly/ajKtP"),
@@ -250,7 +251,9 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://ift.tt/8bxeo1B"),
     "https://europechinese.blogspot.com/2022/06/blog-post_37.html",
   );
+});
 
+Deno.test("其他域名规则", async () => {
   console.info("开始测试其他域名规则");
   assertEquals(
     await clean(
@@ -270,7 +273,9 @@ Deno.test("Remove Track Param", async () => {
     ),
     "https://m.weibo.cn/status/4757578406169966",
   );
+});
 
+Deno.test("追踪参数", async () => {
   console.info("开始测试黑名单……");
   assertEquals(
     await clean(
@@ -282,7 +287,7 @@ Deno.test("Remove Track Param", async () => {
     await clean(
       "https://www.amazon.com/s?k=house+cleaning+supplies&language=zh&pf_rd_i=23641713011&pf_rd_i=23641713011&pf_rd_m=ATVPDKIKX0DER&pf_rd_m=ATVPDKIKX0DER&pf_rd_p=58b06124-efbc-4cfb-bb92-953e4e169518&pf_rd_p=9293d121-93cf-401c-9213-08f5d464f092&pf_rd_r=62EF4F29BD124AS57RAY&pf_rd_r=T9K6XWDA48DPT1A6PWZG&pf_rd_s=merchandised-search-3&pf_rd_s=merchandised-search-3&pf_rd_t=101&pf_rd_t=101&sprefix=house+cle%2Caps%2C162&ref=nb_sb_ss_ts-doa-p_1_9",
     ),
-    "https://www.amazon.com/s?k=house+cleaning+supplies&language=zh&sprefix=house+cle%2Caps%2C162&ref=nb_sb_ss_ts-doa-p_1_9",
+    "https://www.amazon.com/s?k=house+cleaning+supplies&language=zh&sprefix=house+cle%2Caps%2C162",
   );
   assertEquals(
     await clean(

@@ -37,7 +37,7 @@ jobs:
         run: deno lint
 
       - name: Run tests
-        run: deno test --allow-net --coverage=/tmp/deno_coverage
+        run: deno test --allow-net --jobs --coverage=/tmp/deno_coverage
         
       - name: Print coverage
         run: deno coverage /tmp/deno_coverage
