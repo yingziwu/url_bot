@@ -6,6 +6,7 @@ const allowRules: allowRule[] = [
   { domain: "youtu.be", search: ["t"] },
   { domain: "redd.it", search: [] },
   { domain: "twitter.com", search: ["s"] },
+  { domain: "we.tl", search: [] },
 ];
 
 export function test(url: string): boolean {

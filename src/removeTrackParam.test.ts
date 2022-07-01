@@ -245,6 +245,11 @@ Deno.test("Remove Track Param", async () => {
     await clean("https://screenshot.best/FN3KJI.png"),
     "https://img.bgme.bid/media_attachments/files/108/513/394/838/989/941/original/c4f28bf585936e6e.png",
   );
+  // Facebook
+  assertEquals(
+    await clean("https://ift.tt/8bxeo1B"),
+    "https://europechinese.blogspot.com/2022/06/blog-post_37.html",
+  );
 
   console.info("开始测试其他域名规则");
   assertEquals(

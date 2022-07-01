@@ -514,4 +514,20 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["leancoding.co", follow],
   // https://www.ft12.com/
   ["985.so", (url) => extractFromHTML(url, ".url > a", "")],
+  // Facebook
+  ["l.facebook.com", async (url) => {
+    const _url = new URL(url);
+    const target = _url.searchParams.get("u");
+    return target ?? url;
+  }],
+  ["www.facebook.com", async (url) => {
+    const _url = new URL(url);
+    if (_url.pathname.startsWith("/login/")) {
+      return _url.searchParams.get("next") ?? url;
+    } else if (_url.pathname.startsWith("/flx/warn/")) {
+      return _url.searchParams.get("u") ?? url;
+    } else {
+      return url;
+    }
+  }],
 ]);
