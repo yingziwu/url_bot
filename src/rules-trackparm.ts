@@ -2,7 +2,7 @@ export type ValueOf<T> = T[keyof T];
 
 // Base on
 // https://github.com/AdguardTeam/AdguardFilters/blob/b670b623fa3264dcb6130f087758b04431cc3a6a/TrackParamFilter/sections/
-// https://github.com/yingziwu/ublock-rules/blob/5fa34ca18ccc13fb7ed1d2a1aad7161b46015d97/src/trackparam.txt
+// https://github.com/yingziwu/ublock-rules/blob/e7832e9be740e2f0c243c0fda93a74e53bd9f6e5/src/trackparam.txt
 export const general: (string | RegExp)[] = [
   "nx_source",
   "_zucks_suid",
@@ -633,6 +633,23 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
   "3g.163.com": [
     "referFrom",
     "spss",
+  ],
+  "kuaishou.com": [
+    "fid",
+    "cc",
+    "followRefer",
+    /^share/,
+    "docId",
+    "kpn",
+    "subBiz",
+    "photoId",
+    "userId",
+    "et",
+    "isNoRadical",
+    "originShareId",
+    "appType",
+    "timestamp",
+    "location",
   ],
 };
 const whitelist: Record<string, (string | RegExp | rule)[] | true> = {
