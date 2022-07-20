@@ -300,6 +300,7 @@ export const shortURL: Map<string, (url: string) => Promise<string>> = new Map([
   ["gg.gg", follow],
   ["lmg.gg", follow],
   ["geni.us", follow],
+  ["mzl.la", follow],
   [
     "t.co",
     (url) => {
