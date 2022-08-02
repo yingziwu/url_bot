@@ -178,6 +178,10 @@ Deno.test("简单短网址规则", async () => {
     await clean("https://mzl.la/2bPFZvl"),
     "https://support.mozilla.org/kb/whats-new-firefox-android",
   );
+  assertEquals(
+    await clean("https://p.dw.com/p/4EuzA"),
+    "https://www.dw.com/de/chinesische-rakete-st%C3%BCrzt-unkontrolliert-ab/a-62660992",
+  );
 });
 
 Deno.test("复杂短网址规则", async () => {
