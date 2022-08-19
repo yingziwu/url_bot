@@ -532,7 +532,7 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
     "broadcast_type",
     "is_room_feed",
     "vd_source",
-    "mid",
+    "is_story_h5",
   ],
   "search.bilibili.com": ["from_source"],
   // bgme
