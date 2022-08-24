@@ -577,8 +577,8 @@ const specific: Record<string, (string | RegExp | rule)[]> = {
   "xiaohongshu.com": [
     "share_from_user_hidden",
     "xhsshare",
-    "appuid",
-    "apptime",
+    /^app/,
+    "type",
   ],
   "shuidichou.com": [
     "channel",
